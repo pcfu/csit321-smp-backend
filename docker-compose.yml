@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  app: &app
+    build:
+      context: .dockerdev
+      dockerfile: Dockerfile
+      args:
+        PROJECT_NAME: ${PROJECT_NAME}
+    image: ${PROJECT_NAME}:${ENV_VERS}
+    tmpfs:
+        - /tmp
+
+  backend: &backend
+    <<: *app
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/${PROJECT_NAME}:cached
+
+  runner:
+    <<: *backend
+    command: /bin/bash
+    ports:
+      - '5000:5000'
