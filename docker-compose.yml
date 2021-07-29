@@ -22,4 +22,10 @@ services:
     <<: *backend
     command: /bin/bash
     ports:
-      - '8080:8080'
+      - '5000:5000'
+
+  flask:
+    <<: *backend
+    command: flask run --host=0.0.0.0
+    ports:
+      - '5000:5000'
