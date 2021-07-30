@@ -1,5 +1,8 @@
 version: "3.8"
 
+x-common-env: &common-env
+  FRONTEND_HOST: ${DOCKER_IP:-172.17.0.1}
+
 services:
   app: &app
     build:
@@ -16,7 +19,8 @@ services:
     stdin_open: true
     tty: true
     environment:
-      - FLASK_ENV=${FLASK_ENV:-development}
+      <<: *common-env
+      FLASK_ENV: ${FLASK_ENV:-development}
     volumes:
       - .:/${PROJECT_NAME}:cached
 
@@ -36,4 +40,5 @@ services:
     <<: *backend
     command: python -m pytest
     environment:
-      - FLASK_ENV=test
+      <<: *common-env
+      FLASK_ENV: test
