@@ -35,3 +35,5 @@ services:
   pytest:
     <<: *backend
     command: python -m pytest
+    environment:
+      - FLASK_ENV=test
