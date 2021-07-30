@@ -1,10 +1,13 @@
 from flask import Flask
-from src.utilities import register_utility_routes
 
 def create_app(config_filename=None):
     app = Flask(__name__)
-    register_routes(app)
+    register_blueprints(app)
     return app
 
-def register_routes(app):
-    register_utility_routes(app)
+
+def register_blueprints(app):
+    from src.utilities import add_error_handling, utilities_blueprint
+
+    add_error_handling(app)
+    app.register_blueprint(utilities_blueprint)

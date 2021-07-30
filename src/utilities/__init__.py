@@ -1,10 +1,12 @@
 from flask import make_response, jsonify
+from flask import Blueprint
 
-def register_utility_routes(app):
-    @app.route("/", methods=['GET'])
-    def root():
-        return jsonify({ 'status': 'ok', 'message': 'Hello, stranger!' })
+utilities_blueprint = Blueprint('utilities', __name__)
 
+from . import routes
+
+
+def add_error_handling(app):
     @app.errorhandler(404)
     def page_not_found(e):
         content = { 'status': 'error', 'code': e.code, 'msg': e.description }
