@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import make_response, jsonify
 
 def register_utility_routes(app):
     @app.route("/", methods=['GET'])
@@ -7,4 +7,5 @@ def register_utility_routes(app):
 
     @app.errorhandler(404)
     def page_not_found(e):
-        return jsonify({ 'status': 'error', 'code': e.code, 'msg': e.description })
+        content = { 'status': 'error', 'code': e.code, 'msg': e.description }
+        return make_response(jsonify(content), 404)
