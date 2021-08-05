@@ -1,0 +1,18 @@
+---
+# DO NOT USE THESE KEYS FOR PRODUCTION!!!
+
+# Account 1
+- cloud:
+    token: pk_15e784eb70d743d7b7f90b2d36b6ca85
+    sk_token: sk_3367811b900f4f19a1b44d4daf6b4f2b
+  sandbox:
+    token: Tpk_a400f3a72c1241d99cfd3e8add069e34
+    sk_token: Tsk_6bbeddf6547946859f0ffc264ca91d7a
+
+# Account 2
+- cloud:
+    token: pk_a07395a5253d49df88311236f443e5fc
+    sk_token: sk_05b4a64643d846a29b592f4d3511407a
+  sandbox:
+    token: Tpk_56b1ae568abb41a9b4aab7710190e53b
+    sk_token: Tsk_e7f05b83d52f4130af728d9cc6818228
