@@ -21,8 +21,13 @@ services:
     environment:
       <<: *common-env
       FLASK_ENV: ${FLASK_ENV:-development}
+      REDIS_URL: redis://redis:6379/
+      REDIS_QUEUE: ${REDIS_QUEUE}
     volumes:
       - .:/${PROJECT_NAME}:cached
+    depends_on:
+      redis:
+        condition: service_healthy
 
   runner:
     <<: *backend
@@ -36,9 +41,29 @@ services:
     ports:
       - '5000:5000'
 
+  worker:
+    <<: *backend
+    command: flask start_worker
+
   pytest:
     <<: *backend
     command: python -m pytest
     environment:
       <<: *common-env
       FLASK_ENV: test
+
+  redis:
+    image: redis:${REDIS_VERS}-alpine
+    ports:
+      - 6379
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+
+volumes:
+  redis:
