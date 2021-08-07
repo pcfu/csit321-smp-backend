@@ -1,9 +1,14 @@
-import os
+import os, rq
 from flask import Flask
+from config import get_config
+from redis import Redis
+
 
 def create_app(env = os.environ['FLASK_ENV']):
     app = Flask(__name__)
-    app.config.from_pyfile(get_config_filename(app, env))
+    app.config.from_object(get_config(env))
+    app.redis = Redis.from_url(app.config['REDIS_URL'])
+    app.task_queue = rq.Queue(app.config['REDIS_QUEUE'], connection=app.redis)
     register_blueprints(app)
     return app
 
