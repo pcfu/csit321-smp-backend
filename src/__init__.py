@@ -20,6 +20,8 @@ def get_config_filename(app, env):
 
 def register_blueprints(app):
     from src.utilities import add_error_handling, utilities_blueprint
+    from src.ml import ml_blueprint
 
     add_error_handling(app)
     app.register_blueprint(utilities_blueprint)
+    app.register_blueprint(ml_blueprint)
