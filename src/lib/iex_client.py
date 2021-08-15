@@ -2,25 +2,12 @@ import math, yaml, requests
 from functools import reduce
 
 
-SAMPLE_ENTITIES = {
-    'aig'       : 'AIG',
-    'amazon'    : 'AMZN',
-    'apple'     : 'AAPL',
-    'facebook'  : 'FB',
-    'google'    : 'GOOG',
-    'jpmorgan'  : 'JPM',
-    'mcdonalds' : 'MCD',
-    'tesla'     : 'TSLA',
-    'twitter'   : 'TWTR',
-    'walmart'   : 'WMT'
-}
-
-
 class Iex:
     _ENVS = ['production', 'development', 'test']
     _METHODS = ['get', 'post']
     _TOKENS = yaml.load(open('src/lib/api_keys.yml', 'r'), Loader=yaml.Loader)
     _CREDIT_LIMIT = 50000
+    _PRC_HIST_ATTRS = ['date', 'open', 'high', 'low', 'close', 'volume', 'change']
 
 
     def __init__(self, env='development'):
@@ -104,17 +91,21 @@ class Iex:
         return { 'status': 'ok' , 'data': data }
 
 
-    def get_batch_prices(self, symbols=None, range='2d'):
-        if symbols is None:
-            symbols = list(SAMPLE_ENTITIES.values())
-        symbols = reduce(lambda a, b: f'{a},{b}', symbols)
+    def get_batch_prices(self, symbols, range='2d', prev_day_only=True):
+        if type(symbols) == list:
+            symbols = reduce(lambda a, b: f'{a},{b}', symbols)
+        if prev_day_only:
+            range = '2d'
 
         params ={ 'symbols': symbols, 'types': 'chart', 'range': range }
         res = self._call_api('stock/market/batch', **params)
         if res['status'] == 'error':
             return self._error_response(res['error'])
 
-        prices = self._previous_day_prices(res['response'].json())
+        if prev_day_only:
+            prices = self._previous_day_prices(res['response'].json())
+        else:
+            prices = self._format_prices(res['response'].json())
         return { 'status': 'ok' , 'data': prices }
 
 
@@ -144,13 +135,25 @@ class Iex:
         }
 
 
+    def _format_prices(self, raw_data):
+        prices = {}
+
+        for symbol, data in raw_data.items():
+            prices[symbol] = []
+            for day_prices in data['chart']:
+                prc_entry = { k: v for k, v in day_prices.items() if k in self._PRC_HIST_ATTRS }
+                prc_entry['percent_change'] = day_prices['changePercent']
+                prices[symbol].append(prc_entry)
+
+        return prices
+
+
     def _previous_day_prices(self, raw_data):
-        keys = ['date', 'open', 'high', 'low', 'close', 'volume', 'change']
         prices = {}
 
         for symbol, data in raw_data.items():
             last_prices = data['chart'][-1]
-            prices[symbol] = {k: v for k, v in last_prices.items() if k in keys}
-            prices[symbol]['change_percent'] = last_prices['changePercent']
+            prices[symbol] = { k: v for k, v in last_prices.items() if k in self._PRC_HIST_ATTRS }
+            prices[symbol]['percent_change'] = last_prices['changePercent']
 
         return prices
