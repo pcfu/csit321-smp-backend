@@ -1,4 +1,5 @@
 flask
 rq
 PyYAML
+python-dateutil
 pytest
