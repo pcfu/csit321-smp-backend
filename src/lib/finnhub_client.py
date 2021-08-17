@@ -73,10 +73,6 @@ class Finnhub:
 
 
     def get_batch_headlines(self, symbols, start_date=None):
-        if start_date is None:
-            dt = datetime.now() - relativedelta(years=1)
-            start_date = datetime.strftime(dt, self._DATE_FMT)
-
         headlines = {}
         for idx, symbol in enumerate(symbols, start=1):
             res = self.get_headlines(symbol, start_date)
