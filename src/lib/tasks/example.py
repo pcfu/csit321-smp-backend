@@ -8,5 +8,5 @@ class ExampleTask:
         print('Starting task...')
         time.sleep(delay)
         print("===========================================")
-        print(f'JOB #{job.get_id()} - DO SOMETHING HERE')
+        print(f'JOB #{job.get_id() if job else None} - DO SOMETHING HERE')
         print("===========================================")

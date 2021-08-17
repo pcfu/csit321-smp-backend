@@ -5,7 +5,7 @@ from functools import reduce
 class Iex:
     _MODES = ['actual', 'sandbox']
     _METHODS = ['get', 'post']
-    _TOKENS = yaml.load(open('src/lib/api_keys.yml', 'r'), Loader=yaml.Loader)
+    _TOKENS = yaml.load(open('.api_keys.yml', 'r'), Loader=yaml.Loader)
     _CREDIT_LIMIT = 50000
     _PRC_HIST_ATTRS = ['date', 'open', 'high', 'low', 'close', 'volume', 'change']
 
