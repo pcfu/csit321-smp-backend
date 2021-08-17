@@ -5,7 +5,10 @@ from functools import reduce
 class Iex:
     _MODES = ['actual', 'sandbox']
     _METHODS = ['get', 'post']
-    _TOKENS = yaml.load(open('.api_keys.yml', 'r'), Loader=yaml.Loader)
+    _TOKENS = yaml.load(
+        open('src/lib/clients/api_keys.yml', 'r'),
+        Loader=yaml.Loader
+    ).get('iex')
     _CREDIT_LIMIT = 50000
     _PRC_HIST_ATTRS = ['date', 'open', 'high', 'low', 'close', 'volume', 'change']
 
@@ -22,16 +25,10 @@ class Iex:
     def set_mode(self, mode):
         if mode not in self._MODES:
             raise ValueError(f'Unknown mode "{mode}"')
-
         self._mode = mode
-        if mode == 'actual':
-            self._target_domain = 'cloud.iexapis.com'
-            self._token = self._TOKENS[0]['cloud']['token']
-            self._sk_token = self._TOKENS[0]['cloud']['sk_token']
-        else:
-            self._target_domain = 'sandbox.iexapis.com'
-            self._token = self._TOKENS[0]['sandbox']['token']
-            self._sk_token = self._TOKENS[0]['sandbox']['sk_token']
+        self._target_domain = 'cloud.iexapis.com' if mode == 'actual' else 'sandbox.iexapis.com'
+        self._token = self._TOKENS[0].get(mode).get('token')
+        self._sk_token = self._TOKENS[0].get(mode).get('sk_token')
 
 
     def desc(self):

@@ -1,10 +1,14 @@
-import requests, time, math
+import math, time, yaml, requests
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 
 
 class Finnhub:
     _MODES = ['actual', 'sandbox']
+    _TOKENS = yaml.load(
+        open('src/lib/clients/api_keys.yml', 'r'),
+        Loader=yaml.Loader
+    ).get('finnhub')
     _DATE_FMT = "%Y-%m-%d"
     _API_LIMIT_RESET = 60  # 60 seconds until next API call is definitely unrestricted
 
@@ -19,12 +23,8 @@ class Finnhub:
     def set_mode(self, mode):
         if mode not in self._MODES:
             raise ValueError(f'Unknown mode "{mode}"')
-
         self._mode = mode
-        if mode == 'actual':
-            self._token = 'c3icbfaad3ib8lb83050'
-        else:
-            self._token = 'sandbox_c3icbfaad3ib8lb8305g'
+        self._token = self._TOKENS.get(mode)
 
 
     def desc(self):
