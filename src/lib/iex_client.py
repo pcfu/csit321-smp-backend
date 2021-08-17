@@ -3,28 +3,28 @@ from functools import reduce
 
 
 class Iex:
-    _ENVS = ['production', 'development', 'test']
+    _MODES = ['actual', 'sandbox']
     _METHODS = ['get', 'post']
     _TOKENS = yaml.load(open('src/lib/api_keys.yml', 'r'), Loader=yaml.Loader)
     _CREDIT_LIMIT = 50000
     _PRC_HIST_ATTRS = ['date', 'open', 'high', 'low', 'close', 'volume', 'change']
 
 
-    def __init__(self, env='development'):
-        self._env = env
+    def __init__(self, mode='sandbox'):
+        self._mode = None
         self._target_domain = None
         self._token = None
         self._sk_token = None
         self.version = 'stable'
-        self.set_env(env)
+        self.set_mode(mode)
 
 
-    def set_env(self, env):
-        if env not in self._ENVS:
-            raise ValueError(f'Unknown env "{env}"')
+    def set_mode(self, mode):
+        if mode not in self._MODES:
+            raise ValueError(f'Unknown mode "{mode}"')
 
-        self._env = env
-        if env == 'production':
+        self._mode = mode
+        if mode == 'actual':
             self._target_domain = 'cloud.iexapis.com'
             self._token = self._TOKENS[0]['cloud']['token']
             self._sk_token = self._TOKENS[0]['cloud']['sk_token']
@@ -36,7 +36,7 @@ class Iex:
 
     def desc(self):
         return {
-            'env': self._env,
+            'mode': self._mode,
             'domain': self._target_domain,
             'token': self._token,
             'sk_token': self._sk_token,
@@ -50,7 +50,7 @@ class Iex:
             return self._error_response(res['error'])
 
         data = res['response'].json()
-        limit = self._CREDIT_LIMIT if self._env == 'production' else math.inf
+        limit = self._CREDIT_LIMIT if self._mode == 'actual' else math.inf
         credits = {
             'limit': limit,
             'usage': data['monthlyUsage'],
