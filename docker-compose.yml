@@ -10,6 +10,7 @@ services:
       dockerfile: Dockerfile
       args:
         PROJECT_NAME: ${PROJECT_NAME}
+        UBUNTU_VERSION: ${UBUNTU_VERS}
     image: ${PROJECT_NAME}:${ENV_VERS}
     tmpfs:
         - /tmp
