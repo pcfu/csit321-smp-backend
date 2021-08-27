@@ -1,32 +1,18 @@
 from flask import current_app, request, jsonify
 from . import ml_blueprint
+from src.lib.parameter_checking import require_params
 from src.lib.jobs import ModelTrainingJob
 import pickle
 
 
 @ml_blueprint.route('/ml/model_training', methods=['POST'])
-def train():
-    ### Example logic
-    # serialized = pickle.dumps(job)
-    # current_app.redis.set('pickled_obj', serialized)
-    # deserialized = pickle.loads(current_app.redis.get('pickled_obj'))
-
-    params = {}
-    required_params = ['model', 'stocks']
-    for param in required_params:
-        if param not in request.args:
-            return jsonify({ 'status': 'error', 'message': f'missing parameter "{param}"' })
-        params[param] = request.args.get(param)
-
-    for stock in stocks:
-        training = ModelTrainingJob()
-        job = current_app.training_queue.enqueue(
-            training.run,
-            model_config=params['model'],
-            stock=stock
-        )
-
-    return jsonify({ 'status': 'ok', 'message': 'Model training jobs enqueued' })
+@require_params('config_id', 'stocks', 'data_range')
+def train(config_id, stocks, data_range):
+    results = []
+    for stock_id in stocks:
+        res = send_training_job(config_id, stock_id, data_range)
+        results.append(res)
+    return jsonify({ 'status': 'ok', 'message': 'Jobs request processed', 'results': results })
 
 
 @ml_blueprint.route('/ml/predict', methods=['GET'])
@@ -36,3 +22,16 @@ def predict():
     delay = int(request.args.get('delay', 1))
     job = current_app.prediction_queue.enqueue(task.run, delay)
     return jsonify({ 'status': 'ok', 'message': f'Job #{job.get_id()} queued' })
+
+
+def send_training_job(config_id, stock_id, data_range):
+    result = { 'config_id': config_id, 'stock_id': stock_id }
+
+    try:
+        training = ModelTrainingJob(config_id, stock_id, *data_range)
+        job = current_app.training_queue.enqueue(training.run)
+        result.update({ 'status': 'ok', 'job_id': job.get_id() })
+    except Exception as e:
+        result.update({ 'status': 'error', 'error_message': str(e) })
+
+    return result

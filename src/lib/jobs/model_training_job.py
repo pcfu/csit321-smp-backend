@@ -17,14 +17,17 @@ class ModelTrainingJob(BaseJob):
         job = get_current_job()
 
         try:
+            # Update ModelTraining in db to 'training'
             job.meta['status'] = 'started'
             job.save_meta()
             print(f'Performing job - #{job.get_id()}')
             job.meta['status'] = 'done'
+            # Update ModelTraining in db to 'done'
 
         except Exception as err:
             job.meta['status'] = 'error'
             job.meta['message'] = str(err)
+            # Update ModelTraining in db to 'error'
 
         job.save_meta()
 
