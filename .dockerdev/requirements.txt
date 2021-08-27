@@ -1,5 +1,6 @@
 flask
 rq
+requests
 pyspark
 PyYAML
 python-dateutil
