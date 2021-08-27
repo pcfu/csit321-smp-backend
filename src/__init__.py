@@ -11,6 +11,7 @@ def create_app(env = os.environ['FLASK_ENV']):
     app.training_queue = rq.Queue(app.config['REDIS_TRAINING_QUEUE'], connection=app.redis)
     app.prediction_queue = rq.Queue(app.config['REDIS_PREDICTION_QUEUE'], connection=app.redis)
     app.fetch_queue = rq.Queue(app.config['REDIS_FETCH_QUEUE'], connection=app.redis)
+    app.frontend_url = app.config['FRONTEND_URL']
     register_blueprints(app)
     return app
 
