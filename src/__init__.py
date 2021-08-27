@@ -8,7 +8,9 @@ def create_app(env = os.environ['FLASK_ENV']):
     app = Flask(__name__)
     app.config.from_object(get_config(env))
     app.redis = Redis.from_url(app.config['REDIS_URL'])
-    app.task_queue = rq.Queue(app.config['REDIS_QUEUE'], connection=app.redis)
+    app.training_queue = rq.Queue(app.config['REDIS_TRAINING_QUEUE'], connection=app.redis)
+    app.prediction_queue = rq.Queue(app.config['REDIS_PREDICTION_QUEUE'], connection=app.redis)
+    app.fetch_queue = rq.Queue(app.config['REDIS_FETCH_QUEUE'], connection=app.redis)
     register_blueprints(app)
     return app
 

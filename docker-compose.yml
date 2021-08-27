@@ -23,7 +23,9 @@ services:
       <<: *common-env
       FLASK_ENV: ${FLASK_ENV:-development}
       REDIS_URL: redis://redis:6379/
-      REDIS_QUEUE: ${REDIS_QUEUE}
+      REDIS_TRAINING_QUEUE: ${REDIS_TRAINING_QUEUE}
+      REDIS_PREDICTION_QUEUE: ${REDIS_PREDICTION_QUEUE}
+      REDIS_FETCH_QUEUE: ${REDIS_FETCH_QUEUE}
     volumes:
       - .:/${PROJECT_NAME}:cached
     depends_on:
@@ -44,7 +46,7 @@ services:
 
   worker:
     <<: *backend
-    command: flask start_worker
+    command: flask start_worker ${WORKER_TYPE}
 
   pytest:
     <<: *backend
