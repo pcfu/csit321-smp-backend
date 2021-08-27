@@ -19,6 +19,7 @@ def add_error_handling(app):
 
 
     @app.errorhandler(404)
+    @app.errorhandler(422)
     def page_not_found(e):
         content = { 'status': 'error', 'code': e.code, 'message': e.description }
         return make_response(jsonify(content), 404)
