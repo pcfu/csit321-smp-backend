@@ -4,13 +4,14 @@ from config import get_config
 
 
 def handle_http_errors(fn):
-    def wrapper(endpoint, **kwargs):
+    def wrapper(method, endpoint, **kwargs):
         try:
-            return fn(endpoint, **kwargs)
+            return fn(method, endpoint, **kwargs)
         except requests.exceptions.HTTPError as err:
             return {
                 'status': 'error',
                 'code': err.response.status_code,
+                'reason': err.response.reason,
                 'raw_response': err.response
             }
 
@@ -18,20 +19,34 @@ def handle_http_errors(fn):
 
 
 class FrontendClient:
-    @staticmethod
-    @handle_http_errors
-    def get(endpoint, **kwargs):
-        url = FrontendClient.build_url(endpoint)
-        res = requests.get(url, **kwargs)
-        res.raise_for_status()
-        return { 'status': 'ok', 'data': res.json() }
-
+    METHODS = ['get', 'post', 'put']
 
     @staticmethod
     def get_price_histories(stock_id, start=None, end=None):
         endpoint = f'/stocks/{stock_id}/price_histories'
         params = { 'date_start': start, 'date_end': end }
-        return FrontendClient.get(endpoint, params=params)
+        return FrontendClient.call_api('get', endpoint, params=params)
+
+
+    @staticmethod
+    def update_model_training(tid, stage, rmse=None, error_message=None):
+        endpoint = f'/admin/model_trainings/{tid}'
+        params = { 'stage': stage, 'rmse': rmse, 'error_message': error_message }
+        return FrontendClient.call_api('put', endpoint, params=params)
+
+
+    @staticmethod
+    @handle_http_errors
+    def call_api(method, endpoint, **kwargs):
+        method = method.lower()
+        if method not in FrontendClient.METHODS:
+            raise ValueError(f'Unknown method: {method}')
+        fn = getattr(requests, method)
+
+        url = FrontendClient.build_url(endpoint)
+        res = fn(url, **kwargs)
+        res.raise_for_status()
+        return { 'status': 'ok', 'data': res.json() }
 
 
     @staticmethod
