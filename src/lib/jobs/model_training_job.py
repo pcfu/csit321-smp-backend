@@ -3,13 +3,14 @@ from .base_job import BaseJob
 
 
 class ModelTrainingJob(BaseJob):
-    def __init__(self, training_id, config_id, stock_id, date_s, date_e):
+    def __init__(self, ids, model_params, dates):
         super().__init__()
-        self.training_id = training_id
-        self.config_id = config_id
-        self.stock_id = stock_id
-        self.date_s = date_s
-        self.date_e = date_e
+        self.training_id    = ids[0]
+        self.config_id      = ids[1]
+        self.stock_id       = ids[2]
+        self.model_params   = model_params
+        self.date_s         = dates[0]
+        self.date_e         = dates[1]
 
         self._check_vars()
 
@@ -24,8 +25,9 @@ class ModelTrainingJob(BaseJob):
             time.sleep(10)
 
             ### Serialize (De-serialize in prediction job) trained model
+            # model = LSTM(self.model_params)
             # key = self.training_id
-            # serialized = self.pickle.dumps( <MODEL>)
+            # serialized = self.pickle.dumps(model)
             # self.app.redis.set(key, serialized)
             # deserialized = self.pickle.loads( self.app.redis.get(key) )
             ### END PLACEHOLDER CODE ###
