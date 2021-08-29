@@ -16,11 +16,6 @@ def create_app(env = os.environ['FLASK_ENV']):
     return app
 
 
-def get_config_filename(app, env):
-    root = os.path.dirname(app.root_path)
-    return f'{root}/config/{env}.cfg'
-
-
 def register_blueprints(app):
     from src.utilities import add_error_handling, utilities_blueprint
     from src.ml import ml_blueprint
