@@ -10,7 +10,7 @@ def handle_http_errors(fn):
         except requests.exceptions.HTTPError as err:
             return {
                 'status': 'error',
-                'code': res.status_code,
+                'code': err.response.status_code,
                 'raw_response': err.response
             }
 
