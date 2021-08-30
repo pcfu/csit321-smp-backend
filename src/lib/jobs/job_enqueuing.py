@@ -7,7 +7,7 @@ TIMEOUT = 1200  # 1200 secs == 20 mins
 
 def enqueue_training_job(ids, model_params, data_range):
     result = { "training_id": ids[0], "config_id": ids[1], "stock_id": ids[2] }
-    jid = f'modal_config_{result.get("training_id")}_stock_{result.get("stock_id")}'
+    jid = f'model_config_{result.get("config_id")}_stock_{result.get("stock_id")}'
 
     try:
         training = ModelTrainingJob(ids, model_params, data_range)
