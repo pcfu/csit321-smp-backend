@@ -44,26 +44,40 @@ def get_job_id(job_type, training_id):
     return f'{job_type.upper()}_TRAIN{training_id}_{ts}'
 
 
-def enqueue_report(job_type, results):
+def enqueue_result(job_type, results):
     add_s = 's' if isinstance(results, list) else ''
-    msg = f'{job_type.capitalize()} job{add_s} request processed'
-    if has_error(results):
-        return enqueue_partial(msg, results)
+    base_msg = f'{job_type.capitalize()} job{add_s} request processed'
+    if is_success(results):
+        return enqueue_success(base_msg, results)
+    elif is_fail(results):
+        return enqueue_fail(base_msg, results)
     else:
-        return enqueue_success(msg, results)
+        return enqueue_partial(base_msg, results)
 
 
-def has_error(results):
+def is_success(results):
     if isinstance(results, list):
-        return any(res['status'] == 'error' for res in results)
+        return all(res['status'] == 'ok' for res in results)
+    else:
+        return results['status'] == 'ok'
+
+
+def is_fail(results):
+    if isinstance(results, list):
+        return all(res['status'] == 'error' for res in results)
     else:
         return results['status'] == 'error'
 
 
 def enqueue_success(message, results):
-    return { 'status': 'ok', 'message': message, 'results': results }
+    return { 'status': 'success', 'message': message, 'results': results }
+
+
+def enqueue_fail(message, results):
+    message += ' with errors for all jobs'
+    return { 'status': 'failed', 'message': message, 'results': results }
 
 
 def enqueue_partial(message, results):
-    message += f' with one or more errors'
+    message += ' with errors for some jobs'
     return { 'status': 'partial', 'message': message, 'results': results }
