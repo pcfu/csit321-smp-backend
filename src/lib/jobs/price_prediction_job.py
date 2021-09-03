@@ -25,10 +25,9 @@ class PricePredictionJob(BaseJob):
             ### De-serialize trained model
             serialized = self.app.redis.get(self.training_id)
             model = self.pickle.loads(serialized)
-            print("========= MODEL DESCRIPTION ==========")
-            print(model.get_desc())
-            print("========= MODEL PARAMETERS ===========")
-            print(model.get_params())
+            predict = model.get_prediction()
+            print("========= PREDICTED_PRICES ==========")
+            print(predict)
             print("======================================")
             ### END PLACEHOLDER CODE ###
 

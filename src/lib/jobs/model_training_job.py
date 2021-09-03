@@ -1,4 +1,6 @@
 import time
+from datetime import datetime
+from random import seed, random
 from .base_job import BaseJob
 
 
@@ -89,3 +91,24 @@ class DummyModel:
         return f'Model was trained for model_training: {self.tid} ' + \
                f'for Stock: {self.sid} ' + \
                f'at prices from {self.date_s} to {self.date_e}'
+
+    def get_prediction(self):
+        seed(time.time())
+        min_p = 100
+        delta = 200
+
+        return {
+            'entry_date': datetime.strftime(datetime.now(), "%Y-%m-%d"),
+            'nd_min_price': min_p + delta * random(),
+            'nd_exp_price': min_p + delta * random(),
+            'nd_max_price': min_p + delta * random(),
+            'st_min_price': min_p + delta * random(),
+            'st_exp_price': min_p + delta * random(),
+            'st_max_price': min_p + delta * random(),
+            'mt_min_price': min_p + delta * random(),
+            'mt_exp_price': min_p + delta * random(),
+            'mt_max_price': min_p + delta * random(),
+            'lt_min_price': min_p + delta * random(),
+            'lt_exp_price': min_p + delta * random(),
+            'lt_max_price': min_p + delta * random()
+        }
