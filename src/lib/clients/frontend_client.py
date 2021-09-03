@@ -36,6 +36,12 @@ class FrontendClient:
 
 
     @staticmethod
+    def insert_price_prediction(prediction):
+        endpoint = f'/admin/price_predictions'
+        return FrontendClient.call_api('post', endpoint, params=prediction)
+
+
+    @staticmethod
     @handle_http_errors
     def call_api(method, endpoint, **kwargs):
         method = method.lower()

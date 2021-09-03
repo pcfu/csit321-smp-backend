@@ -25,11 +25,13 @@ class PricePredictionJob(BaseJob):
             ### De-serialize trained model
             serialized = self.app.redis.get(self.training_id)
             model = self.pickle.loads(serialized)
-            predict = model.get_prediction()
+            prediction = model.get_prediction()
             print("========= PREDICTED_PRICES ==========")
-            print(predict)
+            print(prediction)
             print("======================================")
             ### END PLACEHOLDER CODE ###
+
+            self._send_prediction_to_frontend(prediction)
 
         except Exception as err:
             self._notify_error_occurred(str(err))
@@ -49,6 +51,13 @@ class PricePredictionJob(BaseJob):
 
         if not self._validate_date_format(self.date_e):
             self._raise_date_error('date_e', self.date_e)
+
+
+    def _send_prediction_to_frontend(self, prediction):
+        self._save_job_status('prediction completed')
+        res = self.frontend.insert_price_prediction(prediction)
+        if res.get('status') == 'error':
+            raise RuntimeError(res.get('reason'))
 
 
     def _notify_error_occurred(self, e_msg):
