@@ -25,20 +25,21 @@ class FrontendClient:
     def get_price_histories(stock_id, start=None, end=None):
         endpoint = f'/stocks/{stock_id}/price_histories'
         params = { 'date_start': start, 'date_end': end }
-        return FrontendClient.call_api('get', endpoint, params=params)
+        return FrontendClient.call_api('get', endpoint, json=params)
 
 
     @staticmethod
     def update_model_training(tid, stage, rmse=None, error_message=None):
         endpoint = f'/admin/model_trainings/{tid}'
         params = { 'stage': stage, 'rmse': rmse, 'error_message': error_message }
-        return FrontendClient.call_api('put', endpoint, params=params)
+        return FrontendClient.call_api('put', endpoint, json=params)
 
 
     @staticmethod
     def insert_price_prediction(prediction):
         endpoint = f'/admin/price_predictions'
-        return FrontendClient.call_api('post', endpoint, params=prediction)
+        params = { 'price_prediction': prediction }
+        return FrontendClient.call_api('post', endpoint, json=params)
 
 
     @staticmethod
