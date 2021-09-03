@@ -3,11 +3,10 @@ from .base_job import BaseJob
 
 
 class ModelTrainingJob(BaseJob):
-    def __init__(self, ids, model_params, dates):
+    def __init__(self, training_id, stock_id, model_params, dates):
         super().__init__()
-        self.training_id    = ids[0]
-        self.config_id      = ids[1]
-        self.stock_id       = ids[2]
+        self.training_id    = training_id
+        self.stock_id       = stock_id
         self.model_params   = model_params
         self.date_s         = dates[0]
         self.date_e         = dates[1]
@@ -22,14 +21,15 @@ class ModelTrainingJob(BaseJob):
 
             ### PLACEHOLDER CODE ###
             print(f'Simulating training for model_training #{self.training_id}')
-            time.sleep(10)
+            time.sleep(5)
 
-            ### Serialize (De-serialize in prediction job) trained model
+            ### Serialize trained model
             # model = LSTM(self.model_params)
-            # key = self.training_id
-            # serialized = self.pickle.dumps(model)
-            # self.app.redis.set(key, serialized)
-            # deserialized = self.pickle.loads( self.app.redis.get(key) )
+            model = DummyModel(self.model_params, self.training_id, \
+                               self.stock_id, self.date_s, self.date_e)
+            key = self.training_id
+            serialized = self.pickle.dumps(model)
+            self.app.redis.set(key, serialized)
             ### END PLACEHOLDER CODE ###
 
             self._notify_training_completed(12.345)   # with placeholder rmse
@@ -71,3 +71,21 @@ class ModelTrainingJob(BaseJob):
     def _notify_error_occurred(self, e_msg):
         self._save_job_status('error', message=e_msg)
         self.frontend.update_model_training(self.training_id, 'error', error_message=e_msg)
+
+
+### REMOVE THIS AFTER ACTUAL MODEL PUT IN
+class DummyModel:
+    def __init__(self, params, tid, sid, date_s, date_e):
+        self.params = params
+        self.tid = tid
+        self.sid = sid
+        self.date_s = date_s
+        self.date_e = date_e
+
+    def get_params(self):
+        return self.params
+
+    def get_desc(self):
+        return f'Model was trained for model_training: {self.tid} ' + \
+               f'for Stock: {self.sid} ' + \
+               f'at prices from {self.date_s} to {self.date_e}'
