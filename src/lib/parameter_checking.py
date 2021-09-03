@@ -12,5 +12,6 @@ def require_params(*params):
 
           return fn(**{k: v for k, v in specified_params.items() if k in params })
 
+      inner_wrapper.__name__ = fn.__name__
       return inner_wrapper
     return outer_wrapper
