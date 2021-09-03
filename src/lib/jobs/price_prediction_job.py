@@ -26,6 +26,7 @@ class PricePredictionJob(BaseJob):
             serialized = self.app.redis.get(self.training_id)
             model = self.pickle.loads(serialized)
             prediction = model.get_prediction()
+            prediction.update({ 'stock_id': self.stock_id })
             print("========= PREDICTED_PRICES ==========")
             print(prediction)
             print("======================================")
