@@ -29,6 +29,12 @@ class FrontendClient:
 
 
     @staticmethod
+    def get_model_config(config_id):
+        endpoint = f'/admin/model_configs/{config_id}'
+        return FrontendClient.call_api('get', endpoint)
+
+
+    @staticmethod
     def update_model_training(tid, stage, rmse=None, error_message=None):
         endpoint = f'/admin/model_trainings/{tid}'
         params = { 'stage': stage, 'rmse': rmse, 'error_message': error_message }
