@@ -12,7 +12,7 @@ DATA_PATH = "data/"  # change the endpoint to database
 TOTAL_TIMESTEPS = 100
 
 
-class PricePredictLSTM:
+class PricePredictionLSTM:
     model = None
     df_train = None
     df_test = None
