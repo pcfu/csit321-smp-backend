@@ -22,9 +22,9 @@ class FrontendClient:
     METHODS = ['get', 'post', 'put']
 
     @staticmethod
-    def get_price_histories(stock_id, start=None, end=None):
+    def get_price_histories(stock_id, start=None, end=None, fields=None):
         endpoint = f'/stocks/{stock_id}/price_histories'
-        params = { 'date_start': start, 'date_end': end }
+        params = { 'date_start': start, 'date_end': end, 'fields': fields }
         return FrontendClient.call_api('get', endpoint, json=params)
 
 
