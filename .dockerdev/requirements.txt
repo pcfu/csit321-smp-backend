@@ -1,7 +1,12 @@
 flask
 rq
 requests
+numpy
+pandas
+scipy
+scikit-learn
 pyspark
+tensorflow
 PyYAML
 python-dateutil
 pytest
