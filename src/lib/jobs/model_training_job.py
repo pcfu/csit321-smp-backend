@@ -50,7 +50,8 @@ class ModelTrainingJob(BaseJob):
 
     def _get_prices(self):
         self._save_job_status('retrieving stock prices')
-        res = self.frontend.get_price_histories(self.stock_id, self.date_s, self.date_e)
+        params = [ self.stock_id, self.date_s, self.date_e, ['close'] ]
+        res = self.frontend.get_price_histories(*params)
         if res.get('status') == 'error':
             raise RuntimeError(res.get('reason'))
         return res.get('data').get('price_histories')
