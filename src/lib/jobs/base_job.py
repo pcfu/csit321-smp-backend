@@ -41,6 +41,8 @@ class BaseJob(ABC, ValidationMixin):
 
     def _save_job_status(self, status, message=None):
         job = get_current_job()
+        if not job: return
+
         job.meta = {}
         job.meta['status'] = status
         if message:
