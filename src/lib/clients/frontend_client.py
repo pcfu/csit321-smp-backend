@@ -53,7 +53,7 @@ class FrontendClient:
         url = FrontendClient.build_url(endpoint)
         res = fn(url, **kwargs)
         res.raise_for_status()
-        return { 'status': 'ok', 'data': res.json() }
+        return res.json()
 
 
     @staticmethod

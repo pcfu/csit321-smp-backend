@@ -43,7 +43,7 @@ class PricePredictionJob(BaseJob):
         res = self.frontend.get_price_histories(self.stock_id, self.date_s, self.date_e)
         if res.get('status') == 'error':
             raise RuntimeError(res.get('reason'))
-        return res.get('data').get('price_histories')
+        return res.get('price_histories')
 
 
     def _check_vars(self):

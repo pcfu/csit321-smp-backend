@@ -54,7 +54,7 @@ class ModelTrainingJob(BaseJob):
         res = self.frontend.get_price_histories(*params)
         if res.get('status') == 'error':
             raise RuntimeError(res.get('reason'))
-        return res.get('data').get('price_histories')
+        return res.get('price_histories')
 
 
     def _notify_training_started(self):
