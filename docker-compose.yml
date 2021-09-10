@@ -44,9 +44,13 @@ services:
     ports:
       - '5000:5000'
 
-  worker:
+  training_worker:
     <<: *backend
-    command: flask start_worker ${WORKER_TYPE}
+    command: flask start_worker
+
+  prediction_worker:
+    <<: *backend
+    command: flask start_worker prediction
 
   pytest:
     <<: *backend
