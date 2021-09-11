@@ -45,7 +45,7 @@ def _enqueue_job(queue, job_cls, job_id, job_args, base_result):
 
 def _get_job_id(job_type, training_id):
     ts = datetime.strftime(datetime.now(), DT_FMT)
-    return f'{job_type.upper()}_TRAIN{training_id}_{ts}'
+    return f'{job_type.upper()}_{training_id}_{ts}'
 
 
 def _is_success(results):
