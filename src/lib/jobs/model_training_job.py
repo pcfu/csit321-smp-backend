@@ -26,14 +26,9 @@ class ModelTrainingJob(BaseJob):
             result = inducer.train_model(model, trng_options, datasets)
             self._notify_training_completed(result.get('rmse'))
 
-            #model.save_model(self.training_id)
-
+            inducer.save_model(model, self.training_id)
             serialized = pickle.dumps(inducer)
             self.app.redis.set(self.training_id, serialized)
-
-            print("=================")
-            print("GOT TO THIS POINT")
-            print("=================")
 
         except Exception as err:
             self._notify_error_occurred(str(err))
