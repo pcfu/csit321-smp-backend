@@ -1,6 +1,5 @@
-import time
-from datetime import datetime
-from random import seed, random
+import pickle
+import src.lib.model_inducers as inducers
 from .base_job import BaseJob
 
 
@@ -18,23 +17,23 @@ class ModelTrainingJob(BaseJob):
 
     def run(self, *args, **kwargs):
         try:
-            prices = self._get_prices()
             self._notify_training_started()
+            inducer = self._get_inducer()
 
-            ### PLACEHOLDER CODE ###
-            print(f'Simulating training for model_training #{self.training_id}')
-            time.sleep(5)
+            model = inducer.build_model(self.model_params)
+            trng_options = self.model_params.get('training_options')
+            datasets = inducer.build_train_test_data(self._get_prices())
+            result = inducer.train_model(model, trng_options, datasets)
+            self._notify_training_completed(result.get('rmse'))
 
-            ### Serialize trained model
-            # model = LSTM(self.model_params)
-            model = DummyModel(self.model_params, self.training_id, \
-                               self.stock_id, self.date_s, self.date_e)
-            key = self.training_id
-            serialized = self.pickle.dumps(model)
-            self.app.redis.set(key, serialized)
-            ### END PLACEHOLDER CODE ###
+            #model.save_model(self.training_id)
 
-            self._notify_training_completed(12.345)   # with placeholder rmse
+            serialized = pickle.dumps(inducer)
+            self.app.redis.set(self.training_id, serialized)
+
+            print("=================")
+            print("GOT TO THIS POINT")
+            print("=================")
 
         except Exception as err:
             self._notify_error_occurred(str(err))
@@ -48,9 +47,16 @@ class ModelTrainingJob(BaseJob):
             self._raise_date_error('date_e', self.date_e)
 
 
+    def _get_inducer(self):
+        inducer_class = getattr(inducers, self.model_params.get('model_class'))
+        return inducer_class()
+
+
     def _get_prices(self):
         self._save_job_status('retrieving stock prices')
-        params = [ self.stock_id, self.date_s, self.date_e, ['close'] ]
+        fields = self.model_params['data_fields']
+        params = [ self.stock_id, self.date_s, self.date_e, fields ]
+
         res = self.frontend.get_price_histories(*params)
         if res.get('status') == 'error':
             raise RuntimeError(res.get('reason'))
@@ -74,42 +80,3 @@ class ModelTrainingJob(BaseJob):
     def _notify_error_occurred(self, e_msg):
         self._save_job_status('error', message=e_msg)
         self.frontend.update_model_training(self.training_id, 'error', error_message=e_msg)
-
-
-### REMOVE THIS AFTER ACTUAL MODEL PUT IN
-class DummyModel:
-    def __init__(self, params, tid, sid, date_s, date_e):
-        self.params = params
-        self.tid = tid
-        self.sid = sid
-        self.date_s = date_s
-        self.date_e = date_e
-
-    def get_params(self):
-        return self.params
-
-    def get_desc(self):
-        return f'Model was trained for model_training: {self.tid} ' + \
-               f'for Stock: {self.sid} ' + \
-               f'at prices from {self.date_s} to {self.date_e}'
-
-    def get_prediction(self):
-        seed(time.time())
-        min_p = 100
-        delta = 200
-
-        return {
-            'entry_date': datetime.strftime(datetime.now(), "%Y-%m-%d"),
-            'nd_min_price': min_p + delta * random(),
-            'nd_exp_price': min_p + delta * random(),
-            'nd_max_price': min_p + delta * random(),
-            'st_min_price': min_p + delta * random(),
-            'st_exp_price': min_p + delta * random(),
-            'st_max_price': min_p + delta * random(),
-            'mt_min_price': min_p + delta * random(),
-            'mt_exp_price': min_p + delta * random(),
-            'mt_max_price': min_p + delta * random(),
-            'lt_min_price': min_p + delta * random(),
-            'lt_exp_price': min_p + delta * random(),
-            'lt_max_price': min_p + delta * random()
-        }
