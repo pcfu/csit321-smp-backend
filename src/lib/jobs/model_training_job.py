@@ -18,17 +18,18 @@ class ModelTrainingJob(BaseJob):
     def run(self, *args, **kwargs):
         try:
             self._notify_training_started()
-            inducer = self._get_inducer()
+            inducer = self._get_model_inducer()
+            raw_data = inducer.get_data(self.stock_id, self.date_s, self.date_e)
 
             model = inducer.build_model(self.model_params)
             trng_options = self.model_params.get('training_options')
-            datasets = inducer.build_train_test_data(self._get_prices())
+            datasets = inducer.build_train_test_data(raw_data)
             result = inducer.train_model(model, trng_options, datasets)
-            self._notify_training_completed(result.get('rmse'))
 
-            inducer.save_model(model, self.training_id)
+            inducer.save_model(model)
             serialized = pickle.dumps(inducer)
             self.app.redis.set(self.training_id, serialized)
+            self._notify_training_completed(result.get('rmse'))
 
         except Exception as err:
             self._notify_error_occurred(str(err))
@@ -42,20 +43,10 @@ class ModelTrainingJob(BaseJob):
             self._raise_date_error('date_e', self.date_e)
 
 
-    def _get_inducer(self):
+    def _get_model_inducer(self):
         inducer_class = getattr(inducers, self.model_params.get('model_class'))
-        return inducer_class()
-
-
-    def _get_prices(self):
-        self._save_job_status('retrieving stock prices')
-        fields = self.model_params['data_fields']
-        params = [ self.stock_id, self.date_s, self.date_e, fields ]
-
-        res = self.frontend.get_price_histories(*params)
-        if res.get('status') == 'error':
-            raise RuntimeError(res.get('reason'))
-        return res.get('price_histories')
+        data_fields = self.model_params.get('data_fields')
+        return inducer_class(self.training_id, data_fields)
 
 
     def _notify_training_started(self):
