@@ -14,7 +14,7 @@ class BaseModel(ABC):
 
 
     @abstractmethod
-    def buildTrainTestData(self, *args, **kwargs):
+    def build_train_test_data(self, *args, **kwargs):
         pass
 
 
@@ -24,17 +24,17 @@ class BaseModel(ABC):
 
 
     def _build_model(self, params):
-        self._add_model(params.get('model'))
+        self._add_model(params.get('model_class'))
         for layer in params.get('init_options').get('layers'):
             self._add_layer(layer)
         self.model.compile(**params.get('init_options').get('compile'))
 
 
-    def _add_model(self, model_type):
-        if model_type == 'sequential':
+    def _add_model(self, model_class):
+        if model_class == 'PricePredictionLSTM':
             self.model = Sequential()
         else:
-            raise ValueError(f'unknown model type: {model_type}')
+            raise ValueError(f'unknown model class: {model_class}')
 
 
     def _add_layer(self, layer_params):

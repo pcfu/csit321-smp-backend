@@ -15,15 +15,20 @@ class PricePredictionLSTM(BaseModel):
         self.scaler = MinMaxScaler(feature_range=(0, 1))
 
 
-    def buildTrainTestData(self, data):
+    def build_train_test_data(self, data):
         """
             Returns an array containing four np arrays with scaled data.
-            e.g. [ x_train, y_train, x_test, y_test ]
+            e.g. [
+                x_train: shape = ( train_size, TOTAL_TIMESTEPS, 1 )
+                y_train: shape = ( train_size, )
+                x_test:  shape = ( test_size, TOTAL_TIMESTEPS, 1 )
+                y_test:  shape = ( test_size, )
+            ]
 
             Parameters
             ----------
             data: list
-                An array of json objects of form { close: price }
+                An array of json objects of form { 'close': float }
         """
 
         scaled_data = self.scaler.fit_transform(pd.DataFrame(data))
@@ -37,6 +42,24 @@ class PricePredictionLSTM(BaseModel):
 
 
     def train(self, x_train, y_train, x_test, y_test, verbose=0):
+        """
+            Returns the result of training as an object of form { rmse: 'float' }
+
+            Parameters
+            ----------
+            x_train: np.array
+                A numpy array with shape = ( train_size, TOTAL_TIMESTEPS, 1 )
+
+            y_train: np.array
+                A numpy array with shape = ( train_size, )
+
+            x_test: np.array
+                A numpy array with shape = ( test_size, TOTAL_TIMESTEPS, 1 )
+
+            y_test: np.array
+                A numpy array with shape = ( test_size, )
+        """
+
         self.model.fit(
             x_train,
             y_train,
