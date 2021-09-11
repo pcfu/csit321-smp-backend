@@ -1,4 +1,3 @@
-import pickle
 from flask import current_app
 from abc import ABC, abstractmethod
 from rq import get_current_job
@@ -15,11 +14,6 @@ class BaseJob(ABC, ValidationMixin):
     @property
     def app(self):
         return self._get_app()
-
-
-    @property
-    def pickle(self):
-        return pickle
 
 
     @abstractmethod
