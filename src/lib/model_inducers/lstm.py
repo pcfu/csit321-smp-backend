@@ -55,6 +55,18 @@ class PricePredictionLSTM(BaseInducer):
 
 
     def get_prediction(self, model, data):
+        """
+            Returns predicted prices in a 1D list
+
+            Parameters
+            ----------
+            model: object
+                tf.keras Sequential model
+
+            data: np array
+                shape (1, data_size)
+        """
+
         results = []
         elements = data.reshape(-1).tolist()
 
@@ -75,6 +87,21 @@ class PricePredictionLSTM(BaseInducer):
 
 
     def get_data(self, stock_id, date_start, date_end):
+        """
+            Returns a list of dicts, each containing a price history entry
+
+            Parameters
+            ----------
+            stock_id: int | str
+                Stock id of price histories' parent Stock in Frontend
+
+            date_start: str
+                format: 'YYYY-MM-DD'
+
+            date_end: str
+                format: 'YYYY-MM-DD'
+        """
+
         params = [ stock_id, date_start, date_end, self.model_data_fields ]
         res = self.frontend.get_price_histories(*params)
         if res.get('status') == 'error':
@@ -103,13 +130,15 @@ class PricePredictionLSTM(BaseInducer):
         train_set, test_set = scaled_data[:train_size], scaled_data[train_size:]
 
         return [
-            *self.build_features_and_labels(train_set),
-            *self.build_features_and_labels(test_set)
+            *self._build_features_and_labels(train_set),
+            *self._build_features_and_labels(test_set)
         ]
 
 
     def build_prediction_data(self, data):
         """
+            Returns an np array of shape (1, data_size) containing scaled data
+
             Parameters
             ----------
             data: list
@@ -120,7 +149,7 @@ class PricePredictionLSTM(BaseInducer):
         return self.scaler.fit_transform(df).reshape(1, -1)
 
 
-    def build_features_and_labels(self, data):
+    def _build_features_and_labels(self, data):
         features, labels = [], []
         for i in range(len(data) - self.TOTAL_TIMESTEPS - 1):
             feature_set = data[i:(i + self.TOTAL_TIMESTEPS), 0]
