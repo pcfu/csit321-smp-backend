@@ -1,18 +1,16 @@
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import MinMaxScaler
-from .base_model import BaseModel
+from .base_inducer import BaseInducer
 
 
-class PricePredictionLSTM(BaseModel):
+class PricePredictionLSTM(BaseInducer):
     TRAIN_TEST_RATIO = 0.65
     TOTAL_TIMESTEPS = 100
 
 
-    def __init__(self, params):
-        super().__init__(params)
-        self.scaler = MinMaxScaler(feature_range=(0, 1))
+    def __init__(self):
+        super().__init__()
 
 
     def build_train_test_data(self, data):
@@ -41,33 +39,30 @@ class PricePredictionLSTM(BaseModel):
         ]
 
 
-    def train(self, x_train, y_train, x_test, y_test, verbose=0):
+    def train_model(self, model, options, datasets, verbose=0):
         """
             Returns the result of training as an object of form { rmse: 'float' }
 
             Parameters
             ----------
-            x_train: np.array
-                A numpy array with shape = ( train_size, TOTAL_TIMESTEPS, 1 )
+            model: object
+                tf.keras Sequential model
 
-            y_train: np.array
-                A numpy array with shape = ( train_size, )
+            options: dict
+                Model training options
 
-            x_test: np.array
-                A numpy array with shape = ( test_size, TOTAL_TIMESTEPS, 1 )
-
-            y_test: np.array
-                A numpy array with shape = ( test_size, )
+            datasets: list
+                Contains four np arrays of the following shapes:
+                    x_train: shape = ( train_size, TOTAL_TIMESTEPS, 1 )
+                    y_train: shape = ( train_size, )
+                    x_test:  shape = ( test_size, TOTAL_TIMESTEPS, 1 )
+                    y_test:  shape = ( test_size, )
         """
 
-        self.model.fit(
-            x_train,
-            y_train,
-            verbose=verbose,
-            **self.training_options
-        )
+        x_train, y_train, x_test, y_test = datasets
+        model.fit(x_train, y_train, verbose=verbose, **options)
 
-        y_predict = self.scaler.inverse_transform(self.model.predict(x_test))
+        y_predict = self.scaler.inverse_transform(model.predict(x_test))
         return { 'rmse': np.sqrt(mean_squared_error(y_test, y_predict)) }
 
 
