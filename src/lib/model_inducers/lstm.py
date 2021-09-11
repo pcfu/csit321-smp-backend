@@ -15,7 +15,7 @@ class PricePredictionLSTM(BaseInducer):
 
     def build_train_test_data(self, data):
         """
-            Returns an array containing four np arrays with scaled data.
+            Returns a list containing four np arrays with scaled data.
             e.g. [
                 x_train: shape = ( train_size, TOTAL_TIMESTEPS, 1 )
                 y_train: shape = ( train_size, )
@@ -41,7 +41,9 @@ class PricePredictionLSTM(BaseInducer):
 
     def train_model(self, model, options, datasets, verbose=0):
         """
-            Returns the result of training as an object of form { rmse: 'float' }
+            Trains the specified model using given options and data.
+            Returns a dict containing training results.
+            e.g. { 'rmse': float }
 
             Parameters
             ----------
@@ -79,6 +81,10 @@ class PricePredictionLSTM(BaseInducer):
         return [ np.array(features).reshape(features_shape), np.array(labels) ]
 
 
+
+    #######
+    # WIP #
+    #######
 
     def predict(self, x_input, duration: int):
         """
