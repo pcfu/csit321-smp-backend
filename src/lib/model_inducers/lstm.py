@@ -71,7 +71,7 @@ class PricePredictionLSTM(BaseInducer):
             elements.extend(res[0].tolist())
             results.extend(res.tolist())
 
-        return np.reshape(results, (-1))
+        return self.scaler.inverse_transform(results).reshape(-1).tolist()
 
 
     def get_data(self, stock_id, date_start, date_end):
