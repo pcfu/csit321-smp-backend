@@ -1,5 +1,8 @@
 import os
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = os.environ['TENSORFLOW_LOG_LEVEL']
+
+
 class UrlBuilder:
     def build_frontend_url(env):
         host = os.environ['FRONTEND_HOST']
