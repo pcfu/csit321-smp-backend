@@ -7,36 +7,22 @@ from .base_inducer import BaseInducer
 class PricePredictionLSTM(BaseInducer):
     TRAIN_TEST_RATIO = 0.65
     TOTAL_TIMESTEPS = 100
+    PREDICTION_DAYS = 14
 
 
-    def __init__(self):
-        super().__init__()
-
-
-    def build_train_test_data(self, data):
+    def __init__(self, training_id, model_data_fields):
         """
-            Returns a list containing four np arrays with scaled data.
-            e.g. [
-                x_train: shape = ( train_size, TOTAL_TIMESTEPS, 1 )
-                y_train: shape = ( train_size, )
-                x_test:  shape = ( test_size, TOTAL_TIMESTEPS, 1 )
-                y_test:  shape = ( test_size, )
-            ]
-
             Parameters
             ----------
-            data: list
-                An array of json objects of form { 'close': float }
+            training_id: int | str
+                Training id of corresponding ModelTraining in Frontend
+
+            model_data_fields: list
+                A list of strings indicating fields to retrieve for get_data
         """
 
-        scaled_data = self.scaler.fit_transform(pd.DataFrame(data))
-        train_size = int(len(scaled_data) * self.TRAIN_TEST_RATIO)
-        train_set, test_set = scaled_data[:train_size], scaled_data[train_size:]
-
-        return [
-            *self.build_features_and_labels(train_set),
-            *self.build_features_and_labels(test_set)
-        ]
+        model_save_path = f'trained_models/{training_id}'
+        super().__init__(model_save_path, model_data_fields)
 
 
     def train_model(self, model, options, datasets, verbose=0):
@@ -68,6 +54,72 @@ class PricePredictionLSTM(BaseInducer):
         return { 'rmse': np.sqrt(mean_squared_error(y_test, y_predict)) }
 
 
+    def get_prediction(self, model, data):
+        results = []
+        elements = data.reshape(-1).tolist()
+
+        for _ in range(self.PREDICTION_DAYS):
+            if len(elements) > self.TOTAL_TIMESTEPS:
+                elements = elements[1:]
+                data_size = len(elements)
+                data = np.array(elements).reshape(1, data_size, 1)
+            else:
+                data_size = len(data.reshape(-1))
+                data.shape = (1, data_size, 1)
+
+            res = model.predict(data, verbose=0)
+            elements.extend(res[0].tolist())
+            results.extend(res.tolist())
+
+        return np.reshape(results, (-1))
+
+
+    def get_data(self, stock_id, date_start, date_end):
+        params = [ stock_id, date_start, date_end, self.model_data_fields ]
+        res = self.frontend.get_price_histories(*params)
+        if res.get('status') == 'error':
+            raise RuntimeError(res.get('reason'))
+        return res.get('price_histories')
+
+
+    def build_train_test_data(self, data):
+        """
+            Returns a list containing four np arrays with scaled data.
+            e.g. [
+                x_train: shape = ( train_size, TOTAL_TIMESTEPS, 1 )
+                y_train: shape = ( train_size, )
+                x_test:  shape = ( test_size, TOTAL_TIMESTEPS, 1 )
+                y_test:  shape = ( test_size, )
+            ]
+
+            Parameters
+            ----------
+            data: list
+                An array of json objects of form { 'close': float }
+        """
+
+        scaled_data = self.scaler.fit_transform(pd.DataFrame(data))
+        train_size = int(len(scaled_data) * self.TRAIN_TEST_RATIO)
+        train_set, test_set = scaled_data[:train_size], scaled_data[train_size:]
+
+        return [
+            *self.build_features_and_labels(train_set),
+            *self.build_features_and_labels(test_set)
+        ]
+
+
+    def build_prediction_data(self, data):
+        """
+            Parameters
+            ----------
+            data: list
+                An array of json objects of form { 'close': float }
+        """
+
+        df = pd.DataFrame(data)
+        return self.scaler.fit_transform(df).reshape(1, -1)
+
+
     def build_features_and_labels(self, data):
         features, labels = [], []
         for i in range(len(data) - self.TOTAL_TIMESTEPS - 1):
@@ -79,54 +131,3 @@ class PricePredictionLSTM(BaseInducer):
 
         features_shape = (len(features), self.TOTAL_TIMESTEPS, 1)
         return [ np.array(features).reshape(features_shape), np.array(labels) ]
-
-
-
-    #######
-    # WIP #
-    #######
-
-    def predict(self, x_input, duration: int):
-        """
-
-        :param x_input: the input data
-        :param duration: the number of days to predict
-        :return: an array with all the predicted prices within the duration
-        """
-
-        if self.model is None:
-            self.load_model()
-
-        # pre-processing
-        x_input = x_input.reset_index()['Close'].reshape(1, -1)
-        temp_input = list(x_input)
-        temp_input = temp_input[0].tolist()
-
-        # 14 days prediction
-        output = []
-        n_steps = 628
-        i = 0
-
-        while i < duration:
-
-            if len(temp_input) > 100:
-                x_input = np.array(temp_input[1:])
-                x_input = x_input.reshape(1, -1)
-                x_input = x_input.reshape((1, n_steps, 1))
-
-                out = self.model.predict(x_input, verbose=0)
-                temp_input.extend(out[0].tolist())
-                temp_input = temp_input[1:]
-                output.extend(out.tolist())
-
-            else:
-                x_input = x_input.reshape((1, n_steps, 1))
-
-                out = self.model.predict(x_input, verbose=0)
-                temp_input.extend(out[0].tolist())
-                output.extend(out.tolist())
-
-            i = i + 1
-
-        output = np.reshape(output, (-1))
-        return output
