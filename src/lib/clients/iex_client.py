@@ -1,14 +1,18 @@
-import math, yaml, requests
+import math, yaml, requests, time, json, re
 from functools import reduce
+
+
+ACCT_INFO = yaml.load(
+    open('src/lib/clients/api_keys.yml', 'r'),
+    Loader=yaml.Loader
+)
 
 
 class Iex:
     _MODES = ['actual', 'sandbox']
     _METHODS = ['get', 'post']
-    _TOKENS = yaml.load(
-        open('src/lib/clients/api_keys.yml', 'r'),
-        Loader=yaml.Loader
-    ).get('iex')
+    _ACCOUNTS = ACCT_INFO.get('iex')
+    _CURR_ACCT = 0
     _CREDIT_LIMIT = 50000
     _PRC_HIST_ATTRS = ['date', 'open', 'high', 'low', 'close', 'volume', 'change']
 
@@ -25,16 +29,31 @@ class Iex:
     def set_mode(self, mode):
         if mode not in self._MODES:
             raise ValueError(f'Unknown mode "{mode}"')
+
         self._mode = mode
-        self._target_domain = 'cloud.iexapis.com' if mode == 'actual' else 'sandbox.iexapis.com'
-        self._token = self._TOKENS[0].get(mode).get('token')
-        self._sk_token = self._TOKENS[0].get(mode).get('sk_token')
+        if mode == 'actual':
+            self._target_domain = 'cloud.iexapis.com'
+        else:
+            self._target_domain = 'sandbox.iexapis.com'
+
+        self._token = self._ACCOUNTS[self._CURR_ACCT].get(mode).get('token')
+        self._sk_token = self._ACCOUNTS[self._CURR_ACCT].get(mode).get('sk_token')
+
+
+    def change_account(self, acct_index=None):
+        target_acct = acct_index or (self._CURR_ACCT + 1)
+        if target_acct >= len(self._ACCOUNTS):
+            target_acct = 0
+
+        self._CURR_ACCT = target_acct
+        self.set_mode(self._mode)
 
 
     def desc(self):
         return {
             'mode': self._mode,
             'domain': self._target_domain,
+            'current_account': self._CURR_ACCT,
             'token': self._token,
             'sk_token': self._sk_token,
             'api_version': self.version
@@ -104,6 +123,12 @@ class Iex:
         else:
             prices = self._format_prices(res['response'].json())
         return { 'status': 'ok' , 'data': prices }
+
+
+    def save_to_json(self, data, filename=None):
+        filename = f'{filename}.json' or f'price_data_{int(time.time())}.json'
+        with open(filename, 'w') as f:
+            f.write(json.dumps(data, indent=4))
 
 
     def _call_api(self, endpoint, method='get', use_sk_token=False, **params):
