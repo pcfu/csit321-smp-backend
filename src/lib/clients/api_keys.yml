@@ -3,7 +3,7 @@
 
 
 iex:
-  # Account 1
+  # Account 0
   - actual:
       token: pk_15e784eb70d743d7b7f90b2d36b6ca85
       sk_token: sk_3367811b900f4f19a1b44d4daf6b4f2b
@@ -11,13 +11,29 @@ iex:
       token: Tpk_a400f3a72c1241d99cfd3e8add069e34
       sk_token: Tsk_6bbeddf6547946859f0ffc264ca91d7a
 
-  # Account 2
+  # Account 1
   - actual:
       token: pk_a07395a5253d49df88311236f443e5fc
       sk_token: sk_05b4a64643d846a29b592f4d3511407a
     sandbox:
       token: Tpk_56b1ae568abb41a9b4aab7710190e53b
       sk_token: Tsk_e7f05b83d52f4130af728d9cc6818228
+
+  # Account 2
+  - actual:
+      token: pk_4d8dda2c5442421ebb11fdaf0810296d
+      sk_token: sk_4ed0dd2d9a454a8db5e5176522e3c11b
+    sandbox:
+      token: Tpk_065d624823a840318cf6f34dd168a905
+      sk_token: Tsk_1993b1c258b04867ab4bc2801daeaa1e
+
+  # Account 3
+  - actual:
+      token: pk_e51acd591d7749329e7965a767c9674f
+      sk_token: sk_5a6da37cec8b4253be01d16f35666dbc
+    sandbox:
+      token: Tpk_5f6e3bdda1874e10b3e472f6e607df61
+      sk_token: Tsk_4336211fcc68463fb3b909823df0627d
 
 
 finnhub:
