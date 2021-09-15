@@ -1,17 +1,13 @@
 import pickle
-from datetime import datetime
+from datetime import datetime, timedelta
 from .base_job import BaseJob
 
 
 class PricePredictionJob(BaseJob):
-    def __init__(self, training_id, stock_id, dates):
+    def __init__(self, training_id, stock_id):
         super().__init__()
-        self.training_id    = training_id
-        self.stock_id       = stock_id
-        self.date_s         = dates[0]
-        self.date_e         = dates[1]
-
-        self._check_vars()
+        self.training_id = training_id
+        self.stock_id    = stock_id
 
 
     def run(self, *args, **kwargs):
@@ -20,7 +16,8 @@ class PricePredictionJob(BaseJob):
             inducer = pickle.loads(serialized)
             model = inducer.load_model()
 
-            raw_data = inducer.get_data(self.stock_id, self.date_s, self.date_e)
+            date_s, date_e = self._get_data_range(inducer.PREDICTION_DAYS)
+            raw_data = inducer.get_data(self.stock_id, date_s, date_e)
             structured_data = inducer.build_prediction_data(raw_data)
             prices = inducer.get_prediction(model, structured_data)
             prediction_params = self._build_prediction_params(prices)
@@ -31,11 +28,18 @@ class PricePredictionJob(BaseJob):
 
 
     def _check_vars(self):
-        if not self._validate_date_format(self.date_s):
-            self._raise_date_error('date_s', self.date_s)
+        # nothing to check
+        pass
 
-        if not self._validate_date_format(self.date_e):
-            self._raise_date_error('date_e', self.date_e)
+
+    def _get_data_range(self, date_delta):
+        fmt = "%Y-%m-%d"
+        date_end = datetime.today()
+        date_start = date_end - timedelta(days = date_delta - 1)
+        return [
+            datetime.strftime(date_start, fmt),
+            datetime.strftime(date_end, fmt)
+        ]
 
 
     def _build_prediction_params(self, prices):

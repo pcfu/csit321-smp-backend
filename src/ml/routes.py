@@ -16,7 +16,7 @@ def train(training_list, model_params, data_range):
 
 
 @ml_blueprint.route('/ml/prediction', methods=['GET'])
-@require_params('training_id', 'stock_id', 'data_range')
-def predict(training_id, stock_id, data_range):
-    res = jq.enqueue_prediction_job(training_id, stock_id, data_range)
+@require_params('training_id', 'stock_id')
+def predict(training_id, stock_id):
+    res = jq.enqueue_prediction_job(training_id, stock_id)
     return jsonify(jq.enqueue_result('prediction', res))
