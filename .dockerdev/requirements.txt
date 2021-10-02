@@ -7,6 +7,7 @@ scipy
 scikit-learn
 pyspark
 tensorflow
+TA-Lib
 PyYAML
 python-dateutil
 pytest

@@ -14,6 +14,7 @@ RUN apt-get update -qq && apt-get upgrade -yq \
     python3-pip \
     openjdk-11-jdk \
     curl \
+    wget \
   && apt-get clean \
   && rm -rf /var/cache/apt/archives/* \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
@@ -21,10 +22,18 @@ RUN apt-get update -qq && apt-get upgrade -yq \
 
 ARG SPARK=spark-3.1.2-bin-hadoop2.7
 RUN cd /home && \
-  curl https://downloads.apache.org/spark/spark-3.1.2/$SPARK.tgz -o $SPARK.tgz && \
+  wget https://downloads.apache.org/spark/spark-3.1.2/$SPARK.tgz && \
   tar xf $SPARK.tgz && \
   rm $SPARK.tgz && \
   mv $SPARK /usr/local/share
+
+RUN cd /home && \
+  wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
+  tar -xf ta-lib-0.4.0-src.tar.gz && \
+  cd ta-lib && \
+  ./configure --prefix=/usr && \
+  make && \
+  make install
 
 RUN ln -s /usr/bin/python3.8 /usr/bin/python
 
