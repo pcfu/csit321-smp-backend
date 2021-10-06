@@ -107,21 +107,16 @@ class Iex:
         return { 'status': 'ok' , 'data': data }
 
 
-    def get_batch_prices(self, symbols, range='2d', prev_day_only=True):
+    def get_batch_prices(self, symbols, days=1):
         if type(symbols) == list:
             symbols = reduce(lambda a, b: f'{a},{b}', symbols)
-        if prev_day_only:
-            range = '2d'
 
-        params ={ 'symbols': symbols, 'types': 'chart', 'range': range }
+        params = { 'symbols': symbols, 'types': 'chart', 'range': 'max', 'last': days }
         res = self._call_api('stock/market/batch', **params)
         if res['status'] == 'error':
             return self._error_response(res['error'])
 
-        if prev_day_only:
-            prices = self._previous_day_prices(res['response'].json())
-        else:
-            prices = self._format_prices(res['response'].json())
+        prices = self._format_prices(res['response'].json())
         return { 'status': 'ok' , 'data': prices }
 
 
