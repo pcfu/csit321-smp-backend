@@ -15,11 +15,11 @@ class UrlBuilder:
 class Config:
     SECRET_KEY = 'bad_secret_key'
     DEBUG = True
-    WORKER_TYPES = ['training', 'prediction', 'fetch']
+    WORKER_TYPES = ['training', 'prediction', 'retrieval']
     REDIS_URL = os.environ['REDIS_URL'] or 'redis://'
     REDIS_TRAINING_QUEUE = os.environ['REDIS_TRAINING_QUEUE'] or 'training-queue'
     REDIS_PREDICTION_QUEUE = os.environ['REDIS_PREDICTION_QUEUE'] or 'prediction-queue'
-    REDIS_FETCH_QUEUE = os.environ['REDIS_FETCH_QUEUE'] or 'fetch-queue'
+    REDIS_RETRIEVAL_QUEUE = os.environ['REDIS_RETRIEVAL_QUEUE'] or 'retrieval-queue'
     FRONTEND_URL = UrlBuilder.build_frontend_url('development')
 
 

@@ -25,7 +25,7 @@ services:
       REDIS_URL: redis://redis:6379/
       REDIS_TRAINING_QUEUE: ${REDIS_TRAINING_QUEUE}
       REDIS_PREDICTION_QUEUE: ${REDIS_PREDICTION_QUEUE}
-      REDIS_FETCH_QUEUE: ${REDIS_FETCH_QUEUE}
+      REDIS_RETRIEVAL_QUEUE: ${REDIS_RETRIEVAL_QUEUE}
       TENSORFLOW_LOG_LEVEL: ${TF_LOG_LEVEL:-2}
     volumes:
       - .:/${PROJECT_NAME}:cached
@@ -52,6 +52,10 @@ services:
   prediction_worker:
     <<: *backend
     command: flask start_worker prediction
+
+  retrieval_worker:
+    <<: *backend
+    command: flask start_worker retrieval
 
   pytest:
     <<: *backend
