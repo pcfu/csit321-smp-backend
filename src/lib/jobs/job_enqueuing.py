@@ -1,10 +1,21 @@
 from datetime import datetime
 from flask import current_app
-from . import ModelTrainingJob, PricePredictionJob
+from . import ModelTrainingJob, \
+              PricePredictionJob, \
+              PriceUpdateJob
 
 
 TIMEOUT = 1200  # 1200 secs == 20 mins
 DT_FMT  = "%Y-%m-%dT%H:%M:%S.%f"
+
+
+def enqueue_price_update_job(symbols, days):
+    result = {}
+    timestamp = int(datetime.timestamp(datetime.now()))
+    jid = f"price_update_{timestamp}"
+    args = [symbols, days]
+    _enqueue_job(current_app.retrieval_queue, PriceUpdateJob, jid, args, result)
+    return result
 
 
 def enqueue_training_job(tid, sid, model_params, data_range):
@@ -25,7 +36,7 @@ def enqueue_prediction_job(training_id, stock_id):
 
 def enqueue_result(job_type, results):
     add_s = 's' if isinstance(results, list) else ''
-    base_msg = f'{job_type.capitalize()} job{add_s} request processed'
+    base_msg = f'{job_type.title()} job{add_s} request processed'
     if _is_success(results):
         return _enqueue_success(base_msg, results)
     elif _is_fail(results):
