@@ -29,6 +29,13 @@ class FrontendClient:
 
 
     @staticmethod
+    def insert_price_histories(data):
+        endpoint = 'stocks/price_histories/batch_create'
+        params = { 'price_histories': data }
+        return FrontendClient.call_api('post', endpoint, json=params)
+
+
+    @staticmethod
     def get_model_config(config_id):
         endpoint = f'/admin/model_configs/{config_id}'
         return FrontendClient.call_api('get', endpoint)
@@ -43,7 +50,7 @@ class FrontendClient:
 
     @staticmethod
     def insert_price_prediction(prediction):
-        endpoint = f'/admin/price_predictions'
+        endpoint = '/admin/price_predictions'
         params = { 'price_prediction': prediction }
         return FrontendClient.call_api('post', endpoint, json=params)
 
