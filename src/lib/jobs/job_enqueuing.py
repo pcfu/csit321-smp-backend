@@ -1,8 +1,7 @@
 from datetime import datetime
 from flask import current_app
-from . import ModelTrainingJob, \
-              PricePredictionJob, \
-              PriceUpdateJob
+from . import PriceUpdateJob, TisUpdateJob, \
+              ModelTrainingJob, PricePredictionJob
 
 
 TIMEOUT = 1200  # 1200 secs == 20 mins
@@ -15,6 +14,15 @@ def enqueue_price_update_job(symbols, days):
     jid = f"price_update_{timestamp}"
     args = [symbols, days]
     _enqueue_job(current_app.retrieval_queue, PriceUpdateJob, jid, args, result)
+    return result
+
+
+def enqueue_tis_update_job(stock_id, prices, n_last_data):
+    result = {}
+    timestamp = int(datetime.timestamp(datetime.now()))
+    jid = f"tis_update_{timestamp}"
+    args = [stock_id, prices, n_last_data]
+    _enqueue_job(current_app.retrieval_queue, TisUpdateJob, jid, args, result)
     return result
 
 
