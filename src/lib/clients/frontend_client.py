@@ -36,6 +36,13 @@ class FrontendClient:
 
 
     @staticmethod
+    def get_technical_indicators(stock_id, start=None, end=None):
+        endpoint = f'/stocks/{stock_id}/technical_indicators'
+        params = { 'date_start': start, 'date_end': end }
+        return FrontendClient.call_api('get', endpoint, json=params)
+
+
+    @staticmethod
     def insert_technical_indicators(stock_id, data):
         endpoint = f'stocks/{stock_id}/technical_indicators/batch_create'
         params = { 'technical_indicators': data }
