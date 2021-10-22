@@ -29,6 +29,13 @@ class FrontendClient:
 
 
     @staticmethod
+    def get_sister_prices(stock_id, start=None, end=None):
+        endpoint = f'/stocks/{stock_id}/price_histories/sister_prices'
+        params = { 'date_start': start, 'date_end': end }
+        return FrontendClient.call_api('get', endpoint, json=params)
+
+
+    @staticmethod
     def insert_price_histories(data):
         endpoint = 'stocks/price_histories/batch_create'
         params = { 'price_histories': data }
