@@ -103,8 +103,14 @@ class Iex:
         if res['status'] == 'error':
             return self._error_response(res['error'])
 
+        prices = []
         data = res['response'].json()
-        return { 'status': 'ok' , 'data': data }
+        for d in data:
+            prc_entry = { k: v for k, v in d.items() if k in self._PRC_HIST_ATTRS }
+            prc_entry['percent_change'] = d['changePercent']
+            prices.append(prc_entry)
+
+        return { 'status': 'ok' , 'data': prices }
 
 
     def get_batch_prices(self, symbols, days=1):
