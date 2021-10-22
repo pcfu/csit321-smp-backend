@@ -20,21 +20,20 @@ class ModelTrainingJob(BaseJob):
 
             self._notify_training_started()
             inducer = self._get_model_inducer()
-            raw_data = inducer.get_data(self.stock_id, date_s, date_e)  # raw_data == DF
-            datasets = inducer.build_train_test_data(raw_data)
+            raw_data = inducer.get_data(self.stock_id, date_s, date_e)
+            split_ratio = self.params.get('train_test_percent')
+            datasets = inducer.build_train_test_data(raw_data, split_ratio)
 
             model = inducer.build_model(self.model_params)
             result = inducer.train_model(model, self.model_params, datasets)
-            # result = { 'model': best_model, 'accuracy': or_rmse, 'parameters': model_params}
 
             ### NAMING SCHEME FOR SAVING MODELS
             ### e.g. KEY = SVM_AAPL_STOCKID_1
             inducer.save_model(result.get('model'))
             serialized = pickle.dumps(inducer)
             self.app.redis.set(self.training_id, serialized)
-            ### MUST BE ABLE TO SEND RMSE OR ACCURACY
-            ### ALSO NEEDS TO SEND PARAMS OF TRAINED MODEL (due to use of gridsearch)
-            self._notify_training_completed(result) #result minus model field
+            del result['model']
+            self._notify_training_completed(result)
 
         except Exception as err:
             self._notify_error_occurred(str(err))
@@ -56,7 +55,8 @@ class ModelTrainingJob(BaseJob):
             raise RuntimeError(res.get('reason'))
 
 
-    def _notify_training_completed(self, rmse):
+    # UPDATE THIS METHOD TO INCLUDE rmse/accuracy/parameters
+    def _notify_training_completed(self, result):
         self._save_job_status('training completed', message=f'rmse = {rmse}')
         res = self.frontend.update_model_training(self.training_id, 'done', rmse=rmse)
         if res.get('status') == 'error':
