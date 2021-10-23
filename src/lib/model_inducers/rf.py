@@ -3,17 +3,17 @@ import numpy as np
 import json
 from .base_inducer import BaseInducer
 
-from sklearn import svm
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.preprocessing import MinMaxScaler
 
 """
-    10 days recommendation prediction using SVM; this is an alternative model for sysadmin to select
+    10 days recommendation prediction using Random Forest; this is an main model and best performance
 """
 
-class SVM(BaseInducer):
+class RF(BaseInducer):
         
     def __init__(self, training_id):
         
@@ -190,7 +190,7 @@ class SVM(BaseInducer):
         self.scaler = MinMaxScaler(feature_range=(0, 1)) 
         arr_scaled = self.scaler.fit_transform(x_train) 
         x_train = pd.DataFrame(arr_scaled, columns=x_train.columns,index=x_train.index)
-        
+
         # Normalization test set
         arr_scaled_test = self.scaler.transform(x_test)
         x_test = pd.DataFrame(arr_scaled_test, columns=x_test.columns,index=x_test.index)
@@ -199,26 +199,26 @@ class SVM(BaseInducer):
 
     def build_model(self, *args):
         """
-            BUild the model of SVM by initializing it
+            BUild the model of Random Forest by initializing it
         """
-        svm_model = svm.SVC()
+        rf_model = RandomForestClassifier()
 
-        return svm_model
+        return rf_model
 
-    def train_model(self, svm_model, model_params, data):
+    def train_model(self, rf_model, model_params, data):
         """
             model_params['build_args']
             Train the model using the final processed data and options (in dict)
 
             Returns
             -------
-            gs_svm: NA
+            gs_rf: NA
                 Trained and fitted model 
 
             best_params: dict
                 Best parameters, to be display in frontend
             
-            f1_score_svm: float
+            f1_score_rf: float
                 performance metric on F1 micro average aka accuracy 
         """
         # Train, test datasets
@@ -231,22 +231,22 @@ class SVM(BaseInducer):
         btss = BlockingTimeSeriesSplit(n_splits=4)
         
         # Cross validation randomized gridsearch
-        gs_svm = RandomizedSearchCV(estimator=svm_model, 
+        gs_rf = RandomizedSearchCV(estimator=rf_model, 
                                     cv=btss,
                                     param_distributions=params,
                                     scoring='accuracy')
         #Fit model
-        gs_svm.fit(x_train, y_train)
+        gs_rf.fit(x_train, y_train)
 
         # Best hyperparameters
-        best_params = gs_svm.best_params_
+        best_params = gs_rf.best_params_
         
         # Get performance metric
-        y_pred_svm = gs_svm.predict(x_test)
-        f1_score_model = f1_score(y_test, y_pred_svm, average='micro')
+        y_pred_rf = gs_rf.predict(x_test)
+        f1_score_model = f1_score(y_test, y_pred_rf, average='micro')
         
         return {
-            'model_fit': gs_svm,
+            'model_fit': gs_rf,
             'f1_score': f1_score_model,
             'best_params': best_params
         }
