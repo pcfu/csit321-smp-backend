@@ -27,7 +27,7 @@ class SVM(BaseInducer):
         model_save_path = f'trained_models/{training_id}'
         super().__init__(model_save_path)
 
-    def get_data(self, stock_id, stock_id1, stock_id2, date_start, date_end, model_data_fields):
+    def get_data(self, stock_id, date_start, date_end, model_data_fields):
         """
             Returns a list of dicts, each containing a price history entry
 
@@ -53,16 +53,16 @@ class SVM(BaseInducer):
         CloseID2 = 'close_2'
         
         params = [ stock_id, date_start, date_end, model_data_fields ]
-        params1 = [ stock_id1, date_start, date_end, ['date','close'] ]
-        params2 = [ stock_id2, date_start, date_end, ['date','close'] ]
+        #params1 = [ stock_id1, date_start, date_end, ['date','close'] ]
+        #params2 = [ stock_id2, date_start, date_end, ['date','close'] ]
         params_ti = [ stock_id, date_start, date_end ]
         params_sis = [ stock_id, date_start, date_end ]
 
         res = self.frontend.get_price_histories(*params)
-        res1 = self.frontend.get_price_histories(*params1)
-        res2 = self.frontend.get_price_histories(*params2)
+        #res1 = self.frontend.get_price_histories(*params1)
+        #res2 = self.frontend.get_price_histories(*params2)
         res_ti = self.frontend.get_technical_indicators(*params_ti)
-        res_sisters = self.frontend.get_sister_prices(*params_sis) # return array
+        res_sisters = self.frontend.get_sister_prices(*params_sis)
 
         # Preprocess df (original stock)
         df = pd.json_normalize(res['price_histories'])
@@ -71,19 +71,24 @@ class SVM(BaseInducer):
         df = df.set_index('date')
         del df['index']
 
-        df1 = pd.json_normalize(res1['price_histories'])
+        df_sisters = pd.json_normalize(res_sisters['sister_stocks'], record_path='price_histories', meta=['symbol'])
+        df_list = [d for _, d in df_sisters.groupby(['symbol'])]
+
+        df1 = df_list[0]
         df1['date'] = pd.to_datetime(df1['date'])
         df1.rename(columns={'close':CloseID1}, inplace=True)
         df1.reset_index(inplace=True)
         df1 = df1.set_index('date')
         del df1['index']
-
-        df2 = pd.json_normalize(res2['price_histories'])
+        del df1['symbol']
+  
+        df2 = df_list[1]
         df2['date'] = pd.to_datetime(df2['date'])
         df2.rename(columns={'close':CloseID2}, inplace=True)
         df2.reset_index(inplace=True)
         df2 = df2.set_index('date')
         del df2['index']
+        del df2['symbol']
 
         # Merge the 3 dataframes
         df_merge = pd.merge(df,df1, how='inner', left_index=True, right_index=True)
@@ -100,8 +105,9 @@ class SVM(BaseInducer):
 
         # Final merge for 3 closing price DF with TI df
         df_final = pd.merge(df_merge1,df_ti, how='inner', left_index=True, right_index=True)
-
+        df_final.to_csv('final.csv')
         return df_final
+        
         #if res.get('status') == 'error':
         #    raise RuntimeError(res.get('reason'))
         #return res.get('price_histories')
@@ -246,7 +252,6 @@ class SVM(BaseInducer):
         y_pred_svm = gs_svm.predict(x_test)
         f1_score_model = f1_score(y_test, y_pred_svm, average='micro')
         
-
         return {
             'model_fit': gs_svm,
             'f1_score': f1_score_model,
