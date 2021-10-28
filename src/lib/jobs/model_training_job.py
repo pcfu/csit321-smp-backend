@@ -15,13 +15,13 @@ class ModelTrainingJob(BaseJob):
 
     def run(self, *args, **kwargs):
         try:
+            self._notify_training_started()
+            inducer = self._get_model_inducer()
             date_s = self.model_params.get('start_date')
             date_e = datetime.today().strftime('%Y-%m-%d')
 
-            self._notify_training_started()
-            inducer = self._get_model_inducer()
             raw_data = inducer.get_data(self.stock_id, date_s, date_e)
-            split_ratio = self.params.get('train_test_percent')
+            split_ratio = self.model_params.get('train_test_percent')
             datasets = inducer.build_train_test_data(raw_data, split_ratio)
 
             model = inducer.build_model(self.model_params)
@@ -44,7 +44,7 @@ class ModelTrainingJob(BaseJob):
 
 
     def _get_model_inducer(self):
-        inducer_class = getattr(inducers, self.model_class)
+        inducer_class = getattr(inducers, self.model_class.upper())
         return inducer_class(self.training_id)
 
 
