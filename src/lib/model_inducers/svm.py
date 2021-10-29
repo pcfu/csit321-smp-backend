@@ -222,8 +222,8 @@ class SVM(BaseInducer):
             accuracy: float
                 performance metric on F1 micro average aka accuracy
 
-            parameters: dict
-                Best model parameters
+            parameters: string
+                Stringified dict of best model parameters
         """
         # Train, test datasets
         [x_train, x_test, y_train, y_test] = data
@@ -247,7 +247,7 @@ class SVM(BaseInducer):
         return {
             'model': gs_svm.best_estimator_,
             'accuracy': f1_score(y_test, y_pred_svm, average='micro'),
-            'parameters': gs_svm.best_params_
+            'parameters': json.dumps(gs_svm.best_params_)
         }
 
 
