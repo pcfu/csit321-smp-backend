@@ -63,9 +63,18 @@ class FrontendClient:
 
 
     @staticmethod
-    def update_model_training(tid, stage, rmse=None, error_message=None):
+    def update_model_training(tid, stage, rmse=None, accuracy=None,
+                              parameters=None, error_message=None):
         endpoint = f'/admin/model_trainings/{tid}'
-        params = { 'stage': stage, 'rmse': rmse, 'error_message': error_message }
+        params = {
+            'model_training': {
+                'stage': stage,
+                'rmse': rmse,
+                'accuracy': accuracy,
+                'parameters': parameters,
+                'error_message': error_message
+            }
+        }
         return FrontendClient.call_api('put', endpoint, json=params)
 
 
