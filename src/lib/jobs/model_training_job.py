@@ -5,10 +5,12 @@ from .base_job import BaseJob
 
 
 class ModelTrainingJob(BaseJob):
-    def __init__(self, training_id, stock_id, model_class, model_params):
+    def __init__(self, tid, sid, symbol, model_name, model_class, model_params):
         super().__init__()
-        self.training_id    = training_id
-        self.stock_id       = stock_id
+        self.training_id    = tid
+        self.stock_id       = sid
+        self.stock_symbol   = symbol
+        self.model_name     = model_name
         self.model_class    = model_class
         self.model_params   = model_params
 
@@ -27,11 +29,9 @@ class ModelTrainingJob(BaseJob):
             model = inducer.build_model(self.model_params)
             result = inducer.train_model(model, self.model_params, datasets)
 
-            ### NAMING SCHEME FOR SAVING MODELS
-            ### e.g. KEY = SVM_AAPL_STOCKID_1
             inducer.save_model(result.get('model'))
             serialized = pickle.dumps(inducer)
-            self.app.redis.set(self.training_id, serialized)
+            self.app.redis.set(inducer.model_save_path, serialized)
             del result['model']
             self._notify_training_completed(result)
 
@@ -45,7 +45,8 @@ class ModelTrainingJob(BaseJob):
 
     def _get_model_inducer(self):
         inducer_class = getattr(inducers, self.model_class.upper())
-        return inducer_class(self.training_id)
+        save_path = f'trained_models/{self.model_name.upper()}_{self.stock_symbol}'
+        return inducer_class(save_path)
 
 
     def _notify_training_started(self):
