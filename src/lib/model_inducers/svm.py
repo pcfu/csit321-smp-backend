@@ -8,24 +8,31 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.preprocessing import MinMaxScaler
+import joblib
+
 
 """
     10 days recommendation prediction using SVM; this is an alternative model for sysadmin to select
 """
 
 class SVM(BaseInducer):
-    def __init__(self, training_id):
-
+    def __init__(self, model_save_path):
         """
             Parameters
             ----------
-            training_id: int | str
-                Training id of corresponding ModelTraining in Frontend
+            model_save_path: str
+                directory name to save model
         """
-
-        model_save_path = f'trained_models/{training_id}'
         super().__init__(model_save_path)
         self.scaler = MinMaxScaler(feature_range=(0, 1))
+
+
+    def save_model(self, model):
+        joblib.dump(model, self.model_save_path)
+
+
+    def load_model(self):
+        return joblib.load(self.model_save_path)
 
 
     def get_data(self, stock_id, date_start, date_end):
@@ -238,7 +245,7 @@ class SVM(BaseInducer):
         y_pred_svm = gs_svm.predict(x_test)
 
         return {
-            'model': gs_svm,
+            'model': gs_svm.best_estimator_,
             'accuracy': f1_score(y_test, y_pred_svm, average='micro'),
             'parameters': gs_svm.best_params_
         }
