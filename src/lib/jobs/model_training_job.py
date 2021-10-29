@@ -56,10 +56,9 @@ class ModelTrainingJob(BaseJob):
             raise RuntimeError(res.get('reason'))
 
 
-    # UPDATE THIS METHOD TO INCLUDE rmse/accuracy/parameters
     def _notify_training_completed(self, result):
-        self._save_job_status('training completed', message=f'rmse = {rmse}')
-        res = self.frontend.update_model_training(self.training_id, 'done', rmse=rmse)
+        self._save_job_status('training completed', message=f'result = {result}')
+        res = self.frontend.update_model_training(self.training_id, 'done', **result)
         if res.get('status') == 'error':
             raise RuntimeError(res.get('reason'))
 
