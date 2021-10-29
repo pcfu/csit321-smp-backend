@@ -5,12 +5,11 @@ from src.lib.jobs import job_enqueuing as jq
 
 
 @ml_blueprint.route('/ml/model_training', methods=['POST'])
-@require_params('training_list', 'model_class', 'model_params')
-def train(training_list, model_class, model_params):
+@require_params('training_list', 'model')
+def train(training_list, model):
     results = []
     for trng in training_list:
-        trng_id, stock_id = trng.values()
-        res = jq.enqueue_training_job(trng_id, stock_id, model_class, model_params)
+        res = jq.enqueue_training_job(*trng.values(), *model.values())
         results.append(res)
     return jsonify(jq.enqueue_result('training', results))
 

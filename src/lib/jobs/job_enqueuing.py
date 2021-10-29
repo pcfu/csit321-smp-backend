@@ -26,10 +26,10 @@ def enqueue_tis_update_job(stock_id, prices, n_last_data):
     return result
 
 
-def enqueue_training_job(tid, sid, model_class, model_params):
+def enqueue_training_job(tid, sid, symbol, model_name, model_class, model_params):
     result = { "training_id": tid, "stock_id": sid }
     jid = _get_job_id('training', tid)
-    args = [tid, sid, model_class, model_params]
+    args = [tid, sid, symbol, model_name, model_class, model_params]
     _enqueue_job(current_app.training_queue, ModelTrainingJob, jid, args, result)
     return result
 
