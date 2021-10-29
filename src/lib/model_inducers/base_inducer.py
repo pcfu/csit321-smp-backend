@@ -1,5 +1,4 @@
-from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.models import load_model
 from src.lib.clients import FrontendClient
 from abc import ABC, abstractmethod
 
@@ -7,9 +6,8 @@ from abc import ABC, abstractmethod
 class BaseInducer(ABC):
     def __init__(self, model_save_path):
         super().__init__()
-        self.scaler = MinMaxScaler(feature_range=(0, 1))
-        self.frontend = FrontendClient
         self.model_save_path = model_save_path
+        self.frontend = FrontendClient
 
 
     def save_model(self, model):
