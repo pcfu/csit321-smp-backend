@@ -86,6 +86,13 @@ class FrontendClient:
 
 
     @staticmethod
+    def insert_recommendation(recommendation):
+        endpoint = '/admin/recommendations'
+        params = { 'recommendation': recommendation }
+        return FrontendClient.call_api('post', endpoint, json=params)
+
+
+    @staticmethod
     @handle_http_errors
     def call_api(method, endpoint, **kwargs):
         method = method.lower()
