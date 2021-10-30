@@ -21,11 +21,6 @@ class BaseJob(ABC, ValidationMixin):
         pass
 
 
-    @abstractmethod
-    def _check_vars(self):
-        pass
-
-
     def _get_app(self):
         c_app = current_app
         if not c_app:

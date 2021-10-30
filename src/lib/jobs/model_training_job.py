@@ -39,10 +39,6 @@ class ModelTrainingJob(BaseJob):
             self._notify_error_occurred(str(err))
 
 
-    def _check_vars(self):
-        pass
-
-
     def _get_model_inducer(self):
         inducer_class = getattr(inducers, self.model_class.upper())
         save_path = f'trained_models/{self.model_name.upper()}_{self.stock_symbol}'

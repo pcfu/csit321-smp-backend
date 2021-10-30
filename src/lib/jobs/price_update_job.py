@@ -19,8 +19,3 @@ class PriceUpdateJob(BaseJob):
 
         except Exception as err:
             print(err)
-
-
-    def _check_vars(self):
-        # nothing to check
-        pass

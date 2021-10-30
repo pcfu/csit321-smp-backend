@@ -16,8 +16,3 @@ class TisUpdateJob(BaseJob):
             self.frontend.insert_technical_indicators(self.stock_id, tis)
         except Exception as err:
             print(err)
-
-
-    def _check_vars(self):
-        # nothing to check
-        pass

@@ -27,11 +27,6 @@ class PricePredictionJob(BaseJob):
             self._notify_error_occurred(str(err))
 
 
-    def _check_vars(self):
-        # nothing to check
-        pass
-
-
     def _get_data_range(self, date_delta):
         fmt = "%Y-%m-%d"
         date_end = datetime.today()
