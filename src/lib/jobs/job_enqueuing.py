@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import current_app
 from . import PriceUpdateJob, TisUpdateJob, \
-              ModelTrainingJob, PricePredictionJob
+              ModelTrainingJob, PricePredictionJob, RecommendationJob
 
 
 TIMEOUT = 1200  # 1200 secs == 20 mins
@@ -39,6 +39,14 @@ def enqueue_prediction_job(training_id, stock_id):
     jid = _get_job_id('prediction', training_id)
     args = [training_id, stock_id]
     _enqueue_job(current_app.prediction_queue, PricePredictionJob, jid, args, result)
+    return result
+
+
+def enqueue_recommendation_job(stock_id, model_path, last_date):
+    result = { 'stock_id': stock_id }
+    jid = _get_job_id('recommendation', stock_id)
+    args = [stock_id, model_path, last_date]
+    _enqueue_job(current_app.prediction_queue, RecommendationJob, jid, args, result)
     return result
 
 
