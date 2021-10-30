@@ -16,6 +16,8 @@ import joblib
 """
 
 class SVM(BaseInducer):
+    PREDICTION_DAYS = 10
+
     def __init__(self, model_save_path):
         """
             Parameters
@@ -283,11 +285,11 @@ class SVM(BaseInducer):
         predicted_result = model_fit.predict(data)
 
         if predicted_result == -1:
-            return 'Sell'
+            return 'sell'
         elif predicted_result == 1:
-            return 'Buy'
+            return 'buy'
         else:
-            return 'Neutral'
+            return 'hold'
 
 
     def _build_features_and_labels(self, data):
