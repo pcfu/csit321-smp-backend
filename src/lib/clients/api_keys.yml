@@ -94,14 +94,6 @@ SNP:
     token: Tpk_5afc1a178e11453f8e30ed692bccadc5
     sk_token: Tsk_efa7e31fdc71410e80e2e7e9110c4686
 
-MPC:
-  actual:
-    token: pk_003679a3c21d4ea4a48a58d79383bebc
-    sk_token: sk_e47234e97c324c37972d62ca52b19928
-  sandbox:
-    token: Tpk_304d920d25e34d17832693c1cd0c57d2
-    sk_token: Tsk_dcec9d94b99a4c3bbcd2606ffe57af1d
-
 TRP:
   actual:
     token: pk_feac85f93dd34b31bb0f3e5bf1f56d98
@@ -173,3 +165,11 @@ BIO:
   sandbox:
     token: Tpk_94a4dabe46874102bbb25208f34de6ad
     sk_token: Tsk_1a2cdb9f8ca04cdf99576b5ff4cf0015
+
+ABT:
+  actual:
+    token: pk_003679a3c21d4ea4a48a58d79383bebc
+    sk_token: sk_e47234e97c324c37972d62ca52b19928
+  sandbox:
+    token: Tpk_304d920d25e34d17832693c1cd0c57d2
+    sk_token: Tsk_dcec9d94b99a4c3bbcd2606ffe57af1d
