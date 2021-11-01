@@ -95,8 +95,9 @@ class Iex:
         return { 'status': 'ok' , 'data': data }
 
 
-    def get_prices(self, symbol, range='1y'):
-        res =  self._call_api(f'stock/{symbol.lower()}/chart/{range}')
+    def get_prices(self, symbol, days=1):
+        params = { 'chartLast': days }
+        res =  self._call_api(f'stock/{symbol.lower()}/chart/max', **params)
         if res['status'] == 'error':
             return self._error_response(res['error'])
 

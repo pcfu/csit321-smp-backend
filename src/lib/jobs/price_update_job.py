@@ -3,18 +3,18 @@ from src.lib.clients import Iex
 
 
 class PriceUpdateJob(BaseJob):
-    def __init__(self, symbols, days):
+    def __init__(self, symbol, days):
         super().__init__()
-        self.symbols = symbols
+        self.symbol = symbol
         self.days = days
 
 
     def run(self):
         try:
-            cl = Iex('actual')
-            res = cl.get_batch_prices(self.symbols, self.days)
-            data = res.get('data')
-            params = [{'symbol': k, 'prices': v[::-1]} for k, v in data.items()]
+            cl = Iex('actual', self.symbol)
+            res = cl.get_prices(self.symbol, self.days)
+            prices = res.get('data')
+            params = { 'symbol': self.symbol, 'prices': prices }
             self.frontend.insert_price_histories(params)
 
         except Exception as err:
