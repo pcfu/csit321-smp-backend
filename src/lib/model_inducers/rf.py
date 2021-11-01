@@ -296,9 +296,6 @@ class RF(BaseInducer):
             return 'hold'
 
 
-    def _build_features_and_labels(self, data):
-        None
-
     # Helper functions
     """
         Helper functions to be use in preprocessing of data.
