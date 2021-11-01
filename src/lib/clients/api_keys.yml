@@ -1,41 +1,175 @@
----
-# DO NOT USE THESE KEYS FOR PRODUCTION!!!
+GENERAL_1:
+  actual:
+    token: pk_15e784eb70d743d7b7f90b2d36b6ca85
+    sk_token: sk_3367811b900f4f19a1b44d4daf6b4f2b
+  sandbox:
+    token: Tpk_a400f3a72c1241d99cfd3e8add069e34
+    sk_token: Tsk_6bbeddf6547946859f0ffc264ca91d7a
 
+GENERAL_2:
+  actual:
+    token: pk_a07395a5253d49df88311236f443e5fc
+    sk_token: sk_05b4a64643d846a29b592f4d3511407a
+  sandbox:
+    token: Tpk_56b1ae568abb41a9b4aab7710190e53b
+    sk_token: Tsk_e7f05b83d52f4130af728d9cc6818228
 
-iex:
-  # Account 0
-  - actual:
-      token: pk_15e784eb70d743d7b7f90b2d36b6ca85
-      sk_token: sk_3367811b900f4f19a1b44d4daf6b4f2b
-    sandbox:
-      token: Tpk_a400f3a72c1241d99cfd3e8add069e34
-      sk_token: Tsk_6bbeddf6547946859f0ffc264ca91d7a
+AAPL:
+  actual:
+    token: pk_4d8dda2c5442421ebb11fdaf0810296d
+    sk_token: sk_4ed0dd2d9a454a8db5e5176522e3c11b
+  sandbox:
+    token: Tpk_065d624823a840318cf6f34dd168a905
+    sk_token: Tsk_1993b1c258b04867ab4bc2801daeaa1e
 
-  # Account 1
-  - actual:
-      token: pk_a07395a5253d49df88311236f443e5fc
-      sk_token: sk_05b4a64643d846a29b592f4d3511407a
-    sandbox:
-      token: Tpk_56b1ae568abb41a9b4aab7710190e53b
-      sk_token: Tsk_e7f05b83d52f4130af728d9cc6818228
+IBM:
+  actual:
+    token: pk_e51acd591d7749329e7965a767c9674f
+    sk_token: sk_5a6da37cec8b4253be01d16f35666dbc
+  sandbox:
+    token: Tpk_5f6e3bdda1874e10b3e472f6e607df61
+    sk_token: Tsk_4336211fcc68463fb3b909823df0627d
 
-  # Account 2
-  - actual:
-      token: pk_4d8dda2c5442421ebb11fdaf0810296d
-      sk_token: sk_4ed0dd2d9a454a8db5e5176522e3c11b
-    sandbox:
-      token: Tpk_065d624823a840318cf6f34dd168a905
-      sk_token: Tsk_1993b1c258b04867ab4bc2801daeaa1e
+AMZN:
+  actual:
+    token: pk_5a40d123792243f097407d9096ac3c47
+    sk_token: sk_8d333f4462ba480abf1df97427ecf88c
+  sandbox:
+    token: Tpk_8d378b7a69cb488db913782e20ee81a8
+    sk_token: Tsk_133a23fbf05c4ebfa99139097e7c88e5
 
-  # Account 3
-  - actual:
-      token: pk_e51acd591d7749329e7965a767c9674f
-      sk_token: sk_5a6da37cec8b4253be01d16f35666dbc
-    sandbox:
-      token: Tpk_5f6e3bdda1874e10b3e472f6e607df61
-      sk_token: Tsk_4336211fcc68463fb3b909823df0627d
+CRM:
+  actual:
+    token: pk_5a40d123792243f097407d9096ac3c47
+    sk_token: sk_8d333f4462ba480abf1df97427ecf88c
+  sandbox:
+    token: Tpk_8d378b7a69cb488db913782e20ee81a8
+    sk_token: Tsk_133a23fbf05c4ebfa99139097e7c88e5
 
+INTC:
+  actual:
+    token: pk_b62c2588bd17499fab9060b6997bbac8
+    sk_token: sk_8daf0c96fedd4d13934fc7de40d32492
+  sandbox:
+    token: Tpk_75b40efac1504c61a97363fabfaca46f
+    sk_token: Tsk_17a9aa3792de4d8ca77244cfe4e75600
 
-finnhub:
-  actual: c3icbfaad3ib8lb83050
-  sandbox: sandbox_c3icbfaad3ib8lb8305g
+CSCO:
+  actual:
+    token: pk_92ae352652fc4f71b2b825edb96906a7
+    sk_token: sk_8c5fceebbac742eaaa7ecd594f061ec7
+  sandbox:
+    token: Tpk_fbd971770e3f45ae81087f3bb6bfb7a1
+    sk_token: Tsk_912a481b512949acb4fdf430be3c4e4c
+
+ORCL:
+  actual:
+    token: pk_a86e3da49bb64f76bf53a2a6ab26f22d
+    sk_token: sk_1e50b9990a614afe90cdfe179ab980a2
+  sandbox:
+    token: Tpk_db09aa11ca744ed0968522e536eebc1f
+    sk_token: Tsk_75e4186ee9f34738be11de7a7756ff9f
+
+XOM:
+  actual:
+    token: pk_db749b17f201492d9f187dbe3fa6fff9
+    sk_token: sk_fcea4cb2b39647a98d1929c75beb9ae0
+  sandbox:
+    token: Tpk_b87735785119431ea2683b2a010ea99c
+    sk_token: Tsk_9602b729e89541988bf2e1d22b386f0a
+
+BP:
+  actual:
+    token: pk_8d3594efbe244473a1206717fdf861f9
+    sk_token: sk_6985d17f359e4ef79fec303a0e7e15a9
+  sandbox:
+    token: Tpk_3c0974ff608f405b98d0ed328643ed21
+    sk_token: Tsk_b296eb926a154f9993265f1bb3a4ad0f
+
+SNP:
+  actual:
+    token: pk_dc88892bf0c2466484a8388a4afac5e6
+    sk_token: sk_8b14773b3f864cd8b3f6bb8059744c0c
+  sandbox:
+    token: Tpk_5afc1a178e11453f8e30ed692bccadc5
+    sk_token: Tsk_efa7e31fdc71410e80e2e7e9110c4686
+
+MPC:
+  actual:
+    token: pk_003679a3c21d4ea4a48a58d79383bebc
+    sk_token: sk_e47234e97c324c37972d62ca52b19928
+  sandbox:
+    token: Tpk_304d920d25e34d17832693c1cd0c57d2
+    sk_token: Tsk_dcec9d94b99a4c3bbcd2606ffe57af1d
+
+TRP:
+  actual:
+    token: pk_feac85f93dd34b31bb0f3e5bf1f56d98
+    sk_token: sk_e35cc35aebd8487a8542eac1683eb55d
+  sandbox:
+    token: Tpk_1cddaaf05265430d9ea067677045cbed
+    sk_token: Tsk_1ecb0064f098408092312f218f636902
+
+COP:
+  actual:
+    token: pk_d9b0737a725f4be99e427e04cd5a0426
+    sk_token: sk_9856766b68cd45719cffe77cd9e370cd
+  sandbox:
+    token: Tpk_3d0d3c587424420ea3fccc659fcdd264
+    sk_token: Tsk_2dedbc324b6e4223a35d68829ae5d89c
+
+DVN:
+  actual:
+    token: pk_e06206e2f51e4288a1282ed8bcd56159
+    sk_token: sk_ed5569a157b04b86879c1cd44dade71b
+  sandbox:
+    token: Tpk_8079b139403647d4bf042f4669577325
+    sk_token: Tsk_7b85ca1541d74c1d9883a7f1c874c183
+
+GSK:
+  actual:
+    token: pk_0394512f39b64bcf8bcad037a8559bc2
+    sk_token: sk_1ab723f6a61b42cc9f2d4271b30eaf0b
+  sandbox:
+    token: Tpk_59cc4e4b20f747b9ba240f3f25f3e8f1
+    sk_token: Tsk_e8f6ff05ebfa4307b4a6cecf659103d3
+
+PFE:
+  actual:
+    token: pk_e3408d86100445d7b62ad07828899767
+    sk_token: sk_1667833055be46feb2fcf7be0a239030
+  sandbox:
+    token: Tpk_7b7d5305229b49b3a7f7b339791cfe0d
+    sk_token: Tsk_79d4184f32294a4590eab9495b19f64f
+
+JNJ:
+  actual:
+    token: pk_2c8bfef30d9a443fb6e569628f5aba5d
+    sk_token: sk_e12f67721d834f9ba6597585408a1cc4
+  sandbox:
+    token: Tpk_a8a05a0e1fbe443c920a788766788451
+    sk_token: Tsk_28ce72c7407048b9b9679a43a82d3717
+
+SNY:
+  actual:
+    token: pk_cb7a3389318e4407b1ca34c6be662651
+    sk_token: sk_da490b70dbbf4e9aa615452884684389
+  sandbox:
+    token: Tpk_2fed8ea43f864c0b9c0dd837f940a61c
+    sk_token: Tsk_598db1b38f484116add1515ec88f581c
+
+MDT:
+  actual:
+    token: pk_4eedbacdfdb3463b9fa278ebd0ecb378
+    sk_token: sk_f209a061d4bd4e27900e6d650a3eec20
+  sandbox:
+    token: Tpk_e749c5677bce44ffba3d5a423e5b9c31
+    sk_token: Tsk_bf01c99740e449ccade6494a3c36bbc9
+
+BIO:
+  actual:
+    token: pk_6dfa4d362fef463ea272de6b69c215c5
+    sk_token: sk_e6c06b4bbc774fe881b4c7b741b48e98
+  sandbox:
+    token: Tpk_94a4dabe46874102bbb25208f34de6ad
+    sk_token: Tsk_1a2cdb9f8ca04cdf99576b5ff4cf0015
