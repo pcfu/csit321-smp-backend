@@ -278,7 +278,7 @@ class SVM(BaseInducer):
 
             Return
             ------
-            Prediction result for 1 day ahead
+            Prediction result for 10 days ahead
         """
         predicted_result = model_fit.predict(data)
 

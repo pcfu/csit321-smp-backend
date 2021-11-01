@@ -276,6 +276,7 @@ class RF(BaseInducer):
 
         return to_predict
 
+
     def get_prediction(self, model_fit, data):
         """
             Perform predicting using the saved fitted model. Prediction input data will be normalize first
@@ -283,16 +284,17 @@ class RF(BaseInducer):
 
             Return
             ------
-            Prediction result for 1 day ahead
+            Prediction result for 10 days ahead
         """
         predicted_result = model_fit.predict(data)
 
         if predicted_result == -1:
-            return 'Sell'
+            return 'sell'
         elif predicted_result == 1:
-            return 'Buy'
+            return 'buy'
         else:
-            return 'Neutral'
+            return 'hold'
+
 
     def _build_features_and_labels(self, data):
         None
