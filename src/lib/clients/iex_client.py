@@ -11,24 +11,25 @@ ACCT_INFO = yaml.load(
 class Iex:
     _MODES = ['actual', 'sandbox']
     _METHODS = ['get', 'post']
-    _ACCOUNTS = ACCT_INFO.get('iex')
-    _CURR_ACCT = 0
     _CREDIT_LIMIT = 50000
     _PRC_HIST_ATTRS = ['date', 'open', 'high', 'low', 'close', 'volume', 'change']
 
 
-    def __init__(self, mode='sandbox'):
+    def __init__(self, mode='sandbox', account='GENERAL_1'):
         self._mode = None
         self._target_domain = None
         self._token = None
         self._sk_token = None
         self.version = 'stable'
+        self.account = account
         self.set_mode(mode)
 
 
     def set_mode(self, mode):
         if mode not in self._MODES:
             raise ValueError(f'Unknown mode "{mode}"')
+        if self.account not in ACCT_INFO.keys():
+            raise ValueError(f'Unknown account: {self.account}')
 
         self._mode = mode
         if mode == 'actual':
@@ -36,26 +37,22 @@ class Iex:
         else:
             self._target_domain = 'sandbox.iexapis.com'
 
-        self._token = self._ACCOUNTS[self._CURR_ACCT].get(mode).get('token')
-        self._sk_token = self._ACCOUNTS[self._CURR_ACCT].get(mode).get('sk_token')
+        self._token = ACCT_INFO.get(self.account).get(mode).get('token')
+        self._sk_token = ACCT_INFO.get(self.account).get(mode).get('sk_token')
 
 
-    def change_account(self, acct_index=None):
-        target_acct = acct_index or (self._CURR_ACCT + 1)
-        if target_acct >= len(self._ACCOUNTS):
-            target_acct = 0
-
-        self._CURR_ACCT = target_acct
+    def change_account(self, account):
+        self.account = account
         self.set_mode(self._mode)
 
 
     def desc(self):
         return {
             'mode': self._mode,
-            'domain': self._target_domain,
-            'current_account': self._CURR_ACCT,
+            'account': self.account,
             'token': self._token,
             'sk_token': self._sk_token,
+            'domain': self._target_domain,
             'api_version': self.version
         }
 
