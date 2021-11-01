@@ -1,6 +1,6 @@
+import json, joblib
 import pandas as pd
 import numpy as np
-import json
 from .base_inducer import BaseInducer
 
 from sklearn import svm
@@ -8,7 +8,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.preprocessing import MinMaxScaler
-import joblib
 
 
 """
@@ -106,7 +105,6 @@ class SVM(BaseInducer):
 
         # Final merge for 3 closing price DF with TI df
         df_final = pd.merge(df_merge1,df_ti, how='inner', left_index=True, right_index=True)
-
         return df_final
 
 
