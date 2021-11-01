@@ -13,6 +13,12 @@ class TisUpdateJob(BaseJob):
     def run(self):
         try:
             tis = TiCalculator.calc_tis(self.prices)[-self.n_last_data:]
+            for ti in tis:
+                for k,v in ti.items():
+                    if ti[k] != 'date':
+                        ti[k] = str(v)
+
             self.frontend.insert_technical_indicators(self.stock_id, tis)
+
         except Exception as err:
             print(err)
