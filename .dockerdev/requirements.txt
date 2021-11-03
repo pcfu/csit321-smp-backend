@@ -3,6 +3,7 @@ rq
 requests
 numpy
 pandas
+pandas_ta
 scipy
 scikit-learn
 pyspark
