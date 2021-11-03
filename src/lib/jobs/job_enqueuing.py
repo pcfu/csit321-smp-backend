@@ -34,10 +34,10 @@ def enqueue_training_job(tid, sid, symbol, model_name, model_class, model_params
     return result
 
 
-def enqueue_prediction_job(training_id, stock_id):
-    result = { 'training_id': training_id }
-    jid = _get_job_id('prediction', training_id)
-    args = [training_id, stock_id]
+def enqueue_prediction_job(stock_id, model_path, last_date):
+    result = { 'stock_id': stock_id }
+    jid = _get_job_id('prediction', stock_id)
+    args = [stock_id, model_path, last_date]
     _enqueue_job(current_app.prediction_queue, PricePredictionJob, jid, args, result)
     return result
 

@@ -4,56 +4,49 @@ from .base_job import BaseJob
 
 
 class PricePredictionJob(BaseJob):
-    def __init__(self, training_id, stock_id):
+    RAW_DATA_RANGE = 365    # 1 year of raw data
+    DATE_FORMAT    = "%Y-%m-%d"
+
+
+    def __init__(self, stock_id, model_path, last_date):
         super().__init__()
-        self.training_id = training_id
         self.stock_id    = stock_id
+        self.model_path = model_path
+        self.last_date  = last_date
 
 
     def run(self, *args, **kwargs):
         try:
-            serialized = self.app.redis.get(self.training_id)
+            serialized = self.app.redis.get(self.model_path)
             inducer = pickle.loads(serialized)
             model = inducer.load_model()
 
-            date_s, date_e = self._get_data_range(inducer.PREDICTION_DAYS)
-            raw_data = inducer.get_data(self.stock_id, date_s, date_e)
-            structured_data = inducer.build_prediction_data(raw_data)
-            prices = inducer.get_prediction(model, structured_data)
+            start_date = self._get_start_date()
+            raw_data = inducer.get_data(self.stock_id, start_date, self.last_date)
+            structured_data = inducer.build_prediction_data(*raw_data)
+            prices = inducer.get_prediction(model, *structured_data)
+
             prediction_params = self._build_prediction_params(prices)
             self._send_prediction_to_frontend(prediction_params)
 
         except Exception as err:
+            print("===============")
+            print(str(err))
+            print("===============")
             self._notify_error_occurred(str(err))
 
 
-    def _get_data_range(self, date_delta):
-        fmt = "%Y-%m-%d"
-        date_end = datetime.today()
-        date_start = date_end - timedelta(days = date_delta - 1)
-        return [
-            datetime.strftime(date_start, fmt),
-            datetime.strftime(date_end, fmt)
-        ]
+    def _get_start_date(self):
+        date_e = datetime.strptime(self.last_date, PricePredictionJob.DATE_FORMAT)
+        date_s = date_e - timedelta(days = PricePredictionJob.RAW_DATA_RANGE - 1)
+        return datetime.strftime(date_s, PricePredictionJob.DATE_FORMAT)
 
 
     def _build_prediction_params(self, prices):
-        return {
-            'stock_id': self.stock_id,
-            'entry_date': datetime.strftime(datetime.now(), "%Y-%m-%d"),
-            'nd_max_price': prices[0],
-            'nd_exp_price': prices[0],
-            'nd_min_price': prices[0],
-            'st_max_price': prices[13],
-            'st_exp_price': prices[13],
-            'st_min_price': prices[13],
-            'mt_max_price': prices[13],
-            'mt_exp_price': prices[13],
-            'mt_min_price': prices[13],
-            'lt_max_price': prices[13],
-            'lt_exp_price': prices[13],
-            'lt_min_price': prices[13]
-        }
+        prices['stock_id'] = self.stock_id
+        prices['entry_date'] = self.last_date
+        return prices
+
 
     def _send_prediction_to_frontend(self, prediction):
         self._save_job_status('prediction completed')
@@ -64,5 +57,3 @@ class PricePredictionJob(BaseJob):
 
     def _notify_error_occurred(self, e_msg):
         self._save_job_status('error', message=e_msg)
-        ###
-        # send notification to frontend about error
