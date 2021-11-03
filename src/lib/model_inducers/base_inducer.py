@@ -1,4 +1,3 @@
-from tensorflow.keras.models import load_model
 from src.lib.clients import FrontendClient
 from abc import ABC, abstractmethod
 
@@ -8,14 +7,6 @@ class BaseInducer(ABC):
         super().__init__()
         self.model_save_path = model_save_path
         self.frontend = FrontendClient
-
-
-    def save_model(self, model):
-        model.save(self.model_save_path)
-
-
-    def load_model(self):
-        return load_model(self.model_save_path)
 
 
     @abstractmethod
