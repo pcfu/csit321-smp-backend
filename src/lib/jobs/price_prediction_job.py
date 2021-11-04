@@ -30,9 +30,6 @@ class PricePredictionJob(BaseJob):
             self._send_prediction_to_frontend(prediction_params)
 
         except Exception as err:
-            print("===============")
-            print(str(err))
-            print("===============")
             self._notify_error_occurred(str(err))
 
 
@@ -44,7 +41,7 @@ class PricePredictionJob(BaseJob):
 
     def _build_prediction_params(self, prices):
         prices['stock_id'] = self.stock_id
-        prices['entry_date'] = self.last_date
+        prices['reference_date'] = self.last_date
         return prices
 
 

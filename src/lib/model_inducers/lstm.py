@@ -176,10 +176,10 @@ class LSTM(BaseInducer):
         result_np = np.array(result_df.iloc[[0, 9, 59], :])
 
         return {
-            'nd_date': datetime.strftime(result_np[0][0], "%Y-%m-%d"),
-            'nd_exp_price': result_np[0][1],
-            'st_date': datetime.strftime(result_np[1][0], "%Y-%m-%d"),
-            'st_exp_price': result_np[1][1],
-            'mt_date': datetime.strftime(result_np[2][0], "%Y-%m-%d"),
-            'mt_exp_price': result_np[2][1],
+            'st_date': datetime.strftime(result_np[0][0], "%Y-%m-%d"),
+            'st_exp_price': result_np[0][1],
+            'mt_date': datetime.strftime(result_np[1][0], "%Y-%m-%d"),
+            'mt_exp_price': result_np[1][1],
+            'lt_date': datetime.strftime(result_np[2][0], "%Y-%m-%d"),
+            'lt_exp_price': result_np[2][1],
         }
