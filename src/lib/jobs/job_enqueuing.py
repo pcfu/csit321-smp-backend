@@ -55,8 +55,8 @@ def enqueue_result(job_type, results):
     base_msg = f'{job_type.title()} job{add_s} request processed'
     if _is_success(results):
         return _enqueue_success(base_msg, results)
-    elif _is_fail(results):
-        return _enqueue_fail(base_msg, results)
+    elif _is_error(results):
+        return _enqueue_error(base_msg, results)
     else:
         return _enqueue_partial(base_msg, results)
 
@@ -82,7 +82,7 @@ def _is_success(results):
         return results['status'] == 'ok'
 
 
-def _is_fail(results):
+def _is_error(results):
     if isinstance(results, list):
         return all(res['status'] == 'error' for res in results)
     else:
@@ -93,9 +93,9 @@ def _enqueue_success(message, results):
     return { 'status': 'success', 'message': message, 'results': results }
 
 
-def _enqueue_fail(message, results):
+def _enqueue_error(message, results):
     message += ' with errors for all jobs'
-    return { 'status': 'failed', 'message': message, 'results': results }
+    return { 'status': 'error', 'message': message, 'results': results }
 
 
 def _enqueue_partial(message, results):
