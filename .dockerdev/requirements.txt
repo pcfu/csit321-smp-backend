@@ -7,6 +7,7 @@ pandas_ta
 scipy
 scikit-learn
 pyspark
+keras==2.6.0
 tensorflow
 ta
 PyYAML
