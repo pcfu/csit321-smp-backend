@@ -1,4 +1,4 @@
-import math
+import math, json
 import numpy as np
 import pandas as pd
 import pandas_ta as ta
@@ -140,7 +140,7 @@ class LSTM(BaseInducer):
         return {
             'model': model,
             'rmse': rmse,
-            'parameters': model_params["build_args"]
+            'parameters': json.dumps(model_params["build_args"])
         }
 
 
