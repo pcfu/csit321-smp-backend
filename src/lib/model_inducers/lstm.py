@@ -167,6 +167,7 @@ class LSTM(BaseInducer):
         prediction_unscaled = model.predict(input_features)
         prediction_copies = np.repeat(prediction_unscaled, self.repeat_df_for_training, axis=-1)
         prediction_actual = self.scaler.inverse_transform(prediction_copies)[:, 0]
+        prediction_actual = prediction_actual[::-1]
 
         forecast_dates = [ts.date() for ts in forecast_dates]   # Convert timestamp to date
         result_df = pd.DataFrame({
