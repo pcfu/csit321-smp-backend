@@ -1,5 +1,8 @@
 import pickle
+import pandas as pd
 from datetime import datetime, timedelta
+from pandas.tseries.holiday import USFederalHolidayCalendar
+from pandas.tseries.offsets import CustomBusinessDay
 from .base_job import BaseJob
 
 
@@ -34,9 +37,12 @@ class RecommendationJob(BaseJob):
 
     def _get_prediction_date(self, days_delta):
         fmt = '%Y-%m-%d'
-        base_dt = datetime.strptime(self.last_date, fmt)
-        target_dt = base_dt + timedelta(days = days_delta)
-        return datetime.strftime(target_dt, fmt)
+        forecast_start_date = datetime.strptime(self.last_date, fmt) + timedelta(days = 1)
+        us_biz_days = CustomBusinessDay(calendar=USFederalHolidayCalendar())
+        target_date = pd.date_range(
+            forecast_start_date, periods=days_delta, freq=us_biz_days
+        ).tolist()[-1]
+        return datetime.strftime(target_date, fmt)
 
 
     def _send_recommendation_to_frontend(self, params):
